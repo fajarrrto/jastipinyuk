@@ -1,4 +1,4 @@
-const CACHE_NAME = 'jastipinyuk-v3';
+const CACHE_NAME = 'jastipinyuk-v4';
 const STATIC_ASSETS = [
   './',
   './index.html',
