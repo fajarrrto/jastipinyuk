@@ -299,6 +299,96 @@
       font-weight: 700 !important;
       border-color: #bfdbfe !important;
     }
+
+    /* Multi-Item Order Form Styles */
+    .order-item-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 10px 12px;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.03);
+    }
+    .order-item-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 3px 10px rgba(15, 23, 42, 0.06);
+    }
+    .item-number-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+
+    /* Compact Admin KPI Strip */
+    .kpi-compact-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+    }
+    .kpi-mini-card {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 10px 12px;
+      border: 1px solid #e2e8f0;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .kpi-mini-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+    }
+    .kpi-mini-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      margin-bottom: 2px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .kpi-mini-value {
+      font-size: 0.96rem;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+    .kpi-mini-sub {
+      font-size: 0.64rem;
+      color: #64748b;
+    }
+
+    /* Compact Table Styles */
+    .table-compact th {
+      padding: 7px 8px !important;
+      font-size: 0.71rem !important;
+      letter-spacing: 0.2px;
+    }
+    .table-compact td {
+      padding: 7px 8px !important;
+      font-size: 0.75rem !important;
+      vertical-align: middle;
+    }
+    .table-row-group {
+      transition: background-color 0.15s ease;
+    }
+    .table-row-group:hover {
+      background-color: #f8fafc !important;
+    }
+    .btn-action-compact {
+      padding: 2px 7px;
+      font-size: 0.72rem;
+      border-radius: 6px;
+    }
+    .item-pill {
+      font-size: 0.69rem;
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid #e2e8f0;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      margin: 1px;
+    }
   </style>
 </head>
 <body class="pb-5">
@@ -363,107 +453,92 @@
     <!-- ========================================== -->
     <!-- 1. SECTION FORM PEMESANAN (CUSTOMER)       -->
     <!-- ========================================== -->
-    <div id="formSection" class="col-12 col-lg-5 mx-auto">
+    <div id="formSection" class="col-12 col-md-10 col-lg-7 col-xl-6 mx-auto">
       <div class="card-custom p-3 p-md-4">
         <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
           <div>
             <h6 class="fw-bold mb-0 text-dark">Formulir Pesanan Jastip</h6>
-            <span class="text-muted" style="font-size: 0.75rem;">Isi rincian pesanan oleh-oleh Anda dengan lengkap</span>
+            <span class="text-muted" style="font-size: 0.75rem;">Bisa pesan lebih dari 1 produk / toko dalam satu transaksi</span>
           </div>
           <span class="badge bg-primary-subtle text-primary border px-2 py-1">Online 24 Jam</span>
         </div>
 
         <form id="orderForm">
-          <!-- Nama Customer -->
-          <div class="mb-2">
-            <label class="form-label">Nama Pemesan</label>
-            <input type="text" class="form-control" id="namaCustomer" required placeholder="Contoh: Budi Santoso" oninput="checkSecretTrigger(this)">
-          </div>
-
-          <!-- WhatsApp Customer -->
-          <div class="mb-2">
-            <label class="form-label">Nomor WhatsApp (Aktif)</label>
-            <div class="input-group">
-              <span class="input-group-text small bg-light" style="font-size: 0.8rem;">+62 / 08</span>
-              <input type="tel" class="form-control" id="noWhatsapp" required placeholder="Contoh: 081234567890" pattern="[0-9]{9,14}">
+          <!-- 1. IDENTITAS PEMESAN -->
+          <div class="p-2 mb-3 bg-light rounded-3 border">
+            <span class="fw-bold text-secondary d-block mb-2" style="font-size: 0.75rem;">👤 INFORMASI PEMESAN & PENGIRIMAN</span>
+            
+            <!-- Nama Customer -->
+            <div class="mb-2">
+              <label class="form-label">Nama Pemesan</label>
+              <input type="text" class="form-control" id="namaCustomer" required placeholder="Contoh: Budi Santoso" oninput="checkSecretTrigger(this)">
             </div>
-            <span class="text-muted" style="font-size: 0.68rem;">Untuk pengiriman update resi, tagihan, dan koordinasi COD.</span>
-          </div>
 
-          <!-- Alamat COD / Pengiriman -->
-          <div class="mb-2">
-            <label class="form-label">Alamat / Titik Temu COD</label>
-            <textarea class="form-control" id="alamatCod" rows="2" required placeholder="Alamat lengkap tujuan atau titik temu COD"></textarea>
-          </div>
-
-          <!-- Toko Oleh-Oleh -->
-          <div class="mb-2">
-            <label class="form-label">Toko Oleh-Oleh Bandung</label>
-            <select class="form-select" id="tokoPesanan" required onchange="handleTokoChange()">
-              <option value="Tiramisusu">Tiramisusu by Chocomory</option>
-              <option value="Bolu Susu Lembang">Bolu Susu Lembang</option>
-              <option value="Cuanki Serayu">Cuanki Serayu</option>
-              <option value="Goela Semoet">Goela Semoet</option>
-              <option value="Roti Macan Bandung">Roti Macan Bandung</option>
-              <option value="Kartika Sari">Kartika Sari</option>
-              <option value="Roti Segar">Roti Segar</option>
-            </select>
-          </div>
-
-          <!-- Varian Rasa Produk -->
-          <div class="mb-2" id="varianContainer">
-            <div class="d-flex justify-content-between align-items-center mb-1">
-              <label class="form-label mb-0">Varian Produk</label>
-              <span class="text-muted" style="font-size: 0.68rem;">Pilih varian atau tulis varian lain</span>
+            <!-- WhatsApp Customer -->
+            <div class="mb-2">
+              <label class="form-label">Nomor WhatsApp (Aktif)</label>
+              <div class="input-group">
+                <span class="input-group-text small bg-white" style="font-size: 0.8rem;">+62 / 08</span>
+                <input type="tel" class="form-control" id="noWhatsapp" required placeholder="Contoh: 081234567890" pattern="[0-9]{9,14}">
+              </div>
+              <span class="text-muted" style="font-size: 0.68rem;">Untuk konfirmasi tagihan, update pengiriman & koordinasi COD.</span>
             </div>
-            <select class="form-select" id="varianSelect" onchange="handleVarianChange()"></select>
-            <input type="text" class="form-control mt-1 d-none" id="varianCustomInput" placeholder="Ketik nama varian / produk lainnya...">
-          </div>
-          
-          <!-- Tanggal Order & Estimasi Ready -->
-          <div class="row g-2 mb-2">
-            <div class="col-6">
-              <label class="form-label">Tanggal Order</label>
-              <input type="date" class="form-control" id="tanggalOrder" required onchange="updateReadyDate()">
-              <div id="hariOrderDisplay" class="text-muted mt-1" style="font-size: 0.72rem; min-height: 16px;"></div>
+
+            <!-- Alamat COD / Pengiriman -->
+            <div class="mb-2">
+              <label class="form-label">Alamat / Titik Temu COD</label>
+              <textarea class="form-control" id="alamatCod" rows="2" required placeholder="Alamat lengkap tujuan pengiriman atau titik temu COD di Bandung"></textarea>
             </div>
-            <div class="col-6">
-              <label class="form-label">Estimasi Ready (Jadwal Kirim)</label>
-              <input type="text" class="form-control bg-light fw-bold text-primary" id="pesananReadyDisplay" readonly placeholder="Pilih Tanggal Order">
-              <input type="hidden" id="pesananReady">
+
+            <!-- Tanggal Order & Estimasi Ready -->
+            <div class="row g-2">
+              <div class="col-6">
+                <label class="form-label">Tanggal Order</label>
+                <input type="date" class="form-control" id="tanggalOrder" required onchange="updateReadyDate()">
+                <div id="hariOrderDisplay" class="text-muted mt-1" style="font-size: 0.72rem; min-height: 16px;"></div>
+              </div>
+              <div class="col-6">
+                <label class="form-label">Estimasi Ready (Jadwal Kirim)</label>
+                <input type="text" class="form-control bg-white fw-bold text-primary" id="pesananReadyDisplay" readonly placeholder="Pilih Tanggal Order">
+                <input type="hidden" id="pesananReady">
+              </div>
             </div>
           </div>
 
-          <!-- Qty, Harga Produk, Fee -->
-          <div class="row g-2 mb-2">
-            <div class="col-4">
-              <label class="form-label">Jumlah (Qty)</label>
-              <input type="number" class="form-control" id="qty" min="1" required value="1" oninput="hitungTotal()">
+          <!-- 2. DAFTAR ITEM TITIPAN (MULTI-ITEM ORDER) -->
+          <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-2 pb-1 border-bottom">
+              <div>
+                <strong class="text-dark" style="font-size: 0.85rem;">📦 Daftar Titipan Produk</strong>
+                <span class="text-muted d-block" style="font-size: 0.7rem;">Tambahkan varian & oleh-oleh yang ingin Anda titip</span>
+              </div>
+              <button type="button" class="btn btn-outline-primary btn-sm fw-semibold py-1 px-2 shadow-sm" onclick="addNewOrderItem()">
+                ➕ Tambah Item Lain
+              </button>
             </div>
-            <div class="col-4">
-              <label class="form-label">Harga Asli / Pcs</label>
-              <input type="text" class="form-control bg-light fw-semibold" id="hargaProdukDisplay" readonly value="Rp 89.000" oninput="handleManualHargaInput(this)">
-              <input type="hidden" id="hargaProduk" value="89000">
-            </div>
-            <div class="col-4">
-              <label class="form-label">Fee Jastip / Pcs</label>
-              <input type="text" class="form-control bg-light text-muted fw-semibold" id="feeJastipDisplay" readonly value="Rp 30.000">
-              <input type="hidden" id="feeJastip" value="30000">
+
+            <!-- Container Kartu Item Dinamis -->
+            <div id="orderItemsContainer" class="d-flex flex-column gap-2">
+              <!-- Item cards injected by JavaScript -->
             </div>
           </div>
 
-          <!-- Ringkasan Tagihan Box -->
+          <!-- 3. RINGKASAN TOTAL TAGIHAN -->
           <div class="bg-light p-3 rounded-3 mb-3 border">
             <div class="d-flex justify-content-between small text-muted mb-1">
-              <span>Harga Jual / pcs:</span>
-              <strong id="displayHargaJual" class="text-dark">Rp 0</strong>
+              <span>Total Titipan:</span>
+              <strong id="displayTotalItemsCount" class="text-dark">1 Item (1 pcs)</strong>
+            </div>
+            <div class="d-flex justify-content-between small text-muted mb-1">
+              <span>Total Modal Produk:</span>
+              <strong id="displayTotalHargaProduk" class="text-dark">Rp 0</strong>
             </div>
             <div class="d-flex justify-content-between small text-muted mb-1">
               <span>Total Fee Jastip:</span>
               <strong id="displayTotalFee" class="text-secondary">Rp 0</strong>
             </div>
             <div class="d-flex justify-content-between small fw-bold text-dark pt-2 border-top">
-              <span class="fs-6">Total Tagihan:</span>
+              <span class="fs-6">Grand Total Tagihan:</span>
               <strong class="text-primary fs-5" id="displayTotalTagihan">Rp 0</strong>
             </div>
           </div>
@@ -558,66 +633,83 @@
                     <span class="badge bg-success-subtle text-success border">Batch Aktif</span>
                   </div>
                 </div>
-                <div class="d-flex align-items-center gap-2">
-                  <label class="form-label mb-0 small fw-bold text-nowrap text-secondary">Pilih Batch:</label>
-                  <select id="kpiBatchFilter" class="form-select form-select-sm" style="min-width: 230px;" onchange="renderTable()"></select>
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                  <div class="d-flex align-items-center gap-1">
+                    <label class="form-label mb-0 small fw-bold text-nowrap text-secondary">Batch:</label>
+                    <select id="kpiBatchFilter" class="form-select form-select-sm" style="min-width: 180px;" onchange="renderTable()"></select>
+                  </div>
+                  <button type="button" id="btnToggleKpiCollapse" class="btn btn-outline-secondary btn-sm py-1 px-2" onclick="toggleKpiCollapse()">
+                    ➖ Ciutkan KPI
+                  </button>
                 </div>
               </div>
 
-              <div class="row g-2">
-                <!-- Kolom 1 -->
-                <div class="col-md-4">
-                  <div class="summary-card mb-2 border-success-subtle bg-success-subtle">
-                    <span class="text-success-emphasis fw-semibold d-block" style="font-size: 0.72rem;">✅ Total Full Payment</span>
-                    <strong class="text-success fs-6" id="sumFullPayment">Rp 0</strong>
-                    <small class="text-muted d-block" style="font-size: 0.65rem;">Harga item + fee lunas penuh</small>
-                  </div>
-                  <div class="summary-card border-warning-subtle bg-warning-subtle">
-                    <span class="text-warning-emphasis fw-semibold d-block" style="font-size: 0.72rem;">⚠️ Total Payment Order Only</span>
-                    <strong class="text-dark fs-6" id="sumOrderOnly">Rp 0</strong>
-                    <small class="text-muted d-block" style="font-size: 0.65rem;">Hanya bayar modal item saja</small>
-                  </div>
+              <!-- Compact Metric Strip -->
+              <div id="kpiCardsContainer" class="kpi-compact-strip">
+                <div class="kpi-mini-card border-success-subtle bg-success-subtle">
+                  <span class="kpi-mini-label text-success-emphasis">✅ Full Payment</span>
+                  <div class="kpi-mini-value text-success" id="sumFullPayment">Rp 0</div>
+                  <span class="kpi-mini-sub">Lunas penuh</span>
                 </div>
 
-                <!-- Kolom 2 -->
-                <div class="col-md-4">
-                  <div class="summary-card mb-2 border-primary-subtle bg-primary-subtle">
-                    <span class="text-primary-emphasis fw-semibold d-block" style="font-size: 0.72rem;">💵 Total Fee Lunas</span>
-                    <strong class="text-primary fs-6" id="sumFeeLunas">Rp 0</strong>
-                    <small class="text-muted d-block" style="font-size: 0.65rem;">Fee jastip yang sudah diterima</small>
-                  </div>
-                  <div class="summary-card border-danger-subtle bg-danger-subtle">
-                    <span class="text-danger-emphasis fw-semibold d-block" style="font-size: 0.72rem;">⏳ Total Fee Belum Lunas</span>
-                    <strong class="text-danger fs-6" id="sumFeeBelumLunas">Rp 0</strong>
-                    <small class="text-muted d-block" style="font-size: 0.65rem;">Fee tertunggak (Order Only & Unpaid)</small>
-                  </div>
+                <div class="kpi-mini-card border-primary-subtle bg-primary-subtle">
+                  <span class="kpi-mini-label text-primary-emphasis">💵 Fee Lunas</span>
+                  <div class="kpi-mini-value text-primary" id="sumFeeLunas">Rp 0</div>
+                  <span class="kpi-mini-sub">Fee diterima</span>
                 </div>
 
-                <!-- Kolom 3 -->
-                <div class="col-md-4">
-                  <div class="summary-card mb-2 border-dark-subtle bg-white">
-                    <span class="text-dark fw-semibold d-block" style="font-size: 0.72rem;">🏦 Total Pendapatan Terkumpul</span>
-                    <strong class="text-dark fs-6" id="sumPendapatanTerkumpul">Rp 0</strong>
-                    <small class="text-muted d-block" style="font-size: 0.65rem;">Total modal/harga asli (Qty × Harga Produk)</small>
-                  </div>
-                  <div class="summary-card border-info-subtle bg-info-subtle">
-                    <span class="text-info-emphasis fw-semibold d-block" style="font-size: 0.72rem;">📈 Total Fee Keseluruhan</span>
-                    <strong class="text-info-emphasis fs-6" id="sumFeeKeseluruhan">Rp 0</strong>
-                    <small class="text-muted d-block" style="font-size: 0.65rem;">Target potensi laba seluruh pesanan</small>
-                  </div>
+                <div class="kpi-mini-card border-danger-subtle bg-danger-subtle">
+                  <span class="kpi-mini-label text-danger-emphasis">⏳ Fee Tertunggak</span>
+                  <div class="kpi-mini-value text-danger" id="sumFeeBelumLunas">Rp 0</div>
+                  <span class="kpi-mini-sub">Belum lunas</span>
+                </div>
+
+                <div class="kpi-mini-card border-warning-subtle bg-warning-subtle">
+                  <span class="kpi-mini-label text-warning-emphasis">⚠️ Order Only</span>
+                  <div class="kpi-mini-value text-dark" id="sumOrderOnly">Rp 0</div>
+                  <span class="kpi-mini-sub">Modal saja</span>
+                </div>
+
+                <div class="kpi-mini-card border-dark-subtle bg-white">
+                  <span class="kpi-mini-label text-dark">🏦 Modal Terkumpul</span>
+                  <div class="kpi-mini-value text-dark" id="sumPendapatanTerkumpul">Rp 0</div>
+                  <span class="kpi-mini-sub">Total harga asli</span>
+                </div>
+
+                <div class="kpi-mini-card border-info-subtle bg-info-subtle">
+                  <span class="kpi-mini-label text-info-emphasis">📈 Target Omzet</span>
+                  <div class="kpi-mini-value text-info-emphasis" id="sumFeeKeseluruhan">Rp 0</div>
+                  <span class="kpi-mini-sub">Total potensi</span>
                 </div>
               </div>
             </div>
 
             <!-- SECTION TABEL PESANAN -->
             <div id="ordersTableSection">
+              <!-- Toolbar & View Switcher -->
+              <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
+                <!-- Mode View Toggle Segmented Buttons -->
+                <div class="btn-group btn-group-sm" role="group">
+                  <button type="button" class="btn btn-primary fw-semibold" id="btnViewModeCompact" onclick="switchAdminViewMode('COMPACT')">
+                    📦 Mode Ringkas (Per Order)
+                  </button>
+                  <button type="button" class="btn btn-outline-primary fw-semibold" id="btnViewModeDetailed" onclick="switchAdminViewMode('DETAILED')">
+                    📑 Mode Rincian (Semua Item)
+                  </button>
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge bg-secondary-subtle text-secondary border p-2 fw-semibold" id="totalOrderBadge">Total: 0 Pesanan</span>
+                </div>
+              </div>
+
               <!-- Filter Controls -->
               <div class="row g-2 mb-2 align-items-center">
-                <div class="col-md-4">
-                  <input type="text" id="searchFilter" class="form-control" placeholder="🔍 Cari customer, WA, alamat, toko, status..." oninput="renderTable()">
+                <div class="col-md-5">
+                  <input type="text" id="searchFilter" class="form-control form-control-sm" placeholder="🔍 Cari nama customer, WA, alamat, toko, status..." oninput="renderTable()">
                 </div>
                 <div class="col-md-3">
-                  <select id="filterPayStatus" class="form-select" onchange="renderTable()">
+                  <select id="filterPayStatus" class="form-select form-select-sm" onchange="renderTable()">
                     <option value="ALL">Semua Payment</option>
                     <option value="Full Payment">Full Payment</option>
                     <option value="Order Only">Order Only (Fee Belum)</option>
@@ -626,8 +718,8 @@
                     <option value="Refunded">Refunded</option>
                   </select>
                 </div>
-                <div class="col-md-3">
-                  <select id="filterLogStatus" class="form-select" onchange="renderTable()">
+                <div class="col-md-4">
+                  <select id="filterLogStatus" class="form-select form-select-sm" onchange="renderTable()">
                     <option value="ALL">Semua Order Tracking</option>
                     <option value="Order Placed">Order Placed</option>
                     <option value="Purchased">Purchased</option>
@@ -636,33 +728,18 @@
                     <option value="Cancelled">Cancelled</option>
                   </select>
                 </div>
-                <div class="col-md-2 text-md-end">
-                  <span class="badge bg-secondary p-2" id="totalOrderBadge">Total: 0</span>
-                </div>
               </div>
 
-              <!-- Tabel Data Pesanan -->
+              <!-- Tabel Data Pesanan (Compact & High-Density) -->
               <div class="table-container">
-                <table class="table table-hover align-middle mb-0">
-                  <thead>
-                    <tr>
-                      <th style="width: 40px;" class="text-center">NO</th>
-                      <th>KODE</th>
-                      <th>CUSTOMER & WHATSAPP</th>
-                      <th>ALAMAT COD</th>
-                      <th>TOKO</th>
-                      <th>VARIAN</th>
-                      <th>TGL ORDER</th>
-                      <th>READY</th>
-                      <th>QTY</th>
-                      <th>TAGIHAN</th>
-                      <th>PAYMENT</th>
-                      <th>TRACKING</th>
-                      <th class="text-center">ACTION</th>
+                <table class="table table-hover align-middle mb-0 table-compact">
+                  <thead id="tableHeadEl">
+                    <tr id="tableHeadRow">
+                      <!-- Dynamic columns inserted by renderTableHead() -->
                     </tr>
                   </thead>
                   <tbody id="tableBody">
-                    <tr><td colspan="13" class="text-center py-3 text-muted">Memuat data dari Google Sheets...</td></tr>
+                    <tr><td colspan="10" class="text-center py-3 text-muted">Memuat data dari Google Sheets...</td></tr>
                   </tbody>
                 </table>
               </div>
@@ -1032,7 +1109,7 @@
         <th style="padding: 8px; text-align: right;">Subtotal</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody id="invItemsTbody">
       <tr style="border-bottom: 1px solid #e2e8f0;">
         <td style="padding: 10px 8px;">
           <strong id="invToko">-</strong><br>
@@ -1383,76 +1460,14 @@
   }
 
   // ==========================================
-  // BRAND & PRICING RULES FOR CUSTOMER FORM
+  // MULTI-ITEM ORDER CART SYSTEM
   // ==========================================
-  function handleTokoChange() {
-    const toko = document.getElementById('tokoPesanan').value;
-    const varianSelect = document.getElementById('varianSelect');
-    const customInput = document.getElementById('varianCustomInput');
-    const storeData = productCatalog[toko] || { defaultFee: 20000, variants: [] };
+  let orderCartItems = [];
+  let cartIdCounter = 1;
 
-    let html = '';
-    (storeData.variants || []).forEach(v => {
-      const vFee = (v.fee !== undefined) ? v.fee : storeData.defaultFee;
-      html += `<option value="${v.name}" data-harga="${v.price}" data-fee="${vFee}">${v.name} (Rp ${Number(v.price).toLocaleString('id-ID')})</option>`;
-    });
-    html += `<option value="LAINNYA">➕ Varian Lainnya / Custom...</option>`;
-    
-    varianSelect.innerHTML = html;
-    if (storeData.variants && storeData.variants.length > 0) {
-      varianSelect.value = storeData.variants[0].name;
-    } else {
-      varianSelect.value = 'LAINNYA';
-    }
-
-    handleVarianChange();
-  }
-
-  function handleVarianChange() {
-    const toko = document.getElementById('tokoPesanan').value;
-    const varianSelect = document.getElementById('varianSelect');
-    const selectedOption = varianSelect.options[varianSelect.selectedIndex];
-    const customInput = document.getElementById('varianCustomInput');
-    const hargaDisplayEl = document.getElementById('hargaProdukDisplay');
-    const hargaValEl = document.getElementById('hargaProduk');
-    const feeDisplayEl = document.getElementById('feeJastipDisplay');
-    const feeValEl = document.getElementById('feeJastip');
-    const storeData = productCatalog[toko] || { defaultFee: 20000, variants: [] };
-
-    if (!selectedOption || selectedOption.value === 'LAINNYA') {
-      customInput.classList.remove('d-none');
-      customInput.focus();
-      hargaDisplayEl.readOnly = false;
-      hargaDisplayEl.classList.remove('bg-light');
-      hargaDisplayEl.value = 'Rp 0';
-      hargaValEl.value = '0';
-      
-      const defaultFee = storeData.defaultFee !== undefined ? storeData.defaultFee : 20000;
-      feeValEl.value = defaultFee;
-      feeDisplayEl.value = 'Rp ' + Number(defaultFee).toLocaleString('id-ID');
-    } else {
-      customInput.classList.add('d-none');
-      const harga = parseInt(selectedOption.getAttribute('data-harga')) || 0;
-      const fee = parseInt(selectedOption.getAttribute('data-fee')) || storeData.defaultFee || 20000;
-
-      hargaValEl.value = harga;
-      hargaDisplayEl.value = 'Rp ' + Number(harga).toLocaleString('id-ID');
-      hargaDisplayEl.readOnly = true;
-      hargaDisplayEl.classList.add('bg-light');
-
-      feeValEl.value = fee;
-      feeDisplayEl.value = 'Rp ' + Number(fee).toLocaleString('id-ID');
-    }
-
-    hitungTotal();
-  }
-
-  function handleManualHargaInput(inputEl) {
-    let cleanVal = inputEl.value.replace(/[^0-9]/g, '');
-    let numVal = parseInt(cleanVal) || 0;
-    document.getElementById('hargaProduk').value = numVal;
-    inputEl.value = numVal > 0 ? 'Rp ' + numVal.toLocaleString('id-ID') : 'Rp 0';
-    hitungTotal();
+  function initDefaultCart() {
+    orderCartItems = [];
+    addNewOrderItem();
   }
 
   function getFeePerPcs(brand, qty) {
@@ -1467,26 +1482,263 @@
     return 20000;
   }
 
-  function hitungTotal() {
-    const brand = document.getElementById('tokoPesanan').value;
-    const qty = parseInt(document.getElementById('qty').value) || 1;
-    const harga = parseInt(document.getElementById('hargaProduk').value) || 0;
-    let feePerPcs = parseInt(document.getElementById('feeJastip').value) || 0;
+  function addNewOrderItem(preset = null) {
+    const defaultStore = preset ? preset.toko : 'Tiramisusu';
+    const storeData = productCatalog[defaultStore] || { defaultFee: 20000, variants: [] };
+    const firstVariant = (storeData.variants && storeData.variants.length > 0) ? storeData.variants[0] : null;
 
-    // Diskon grosir khusus Roti Segar
-    if (brand === 'Roti Segar') {
-      feePerPcs = (qty >= 3) ? 4000 : 5000;
-      document.getElementById('feeJastip').value = feePerPcs;
-      document.getElementById('feeJastipDisplay').value = 'Rp ' + Number(feePerPcs).toLocaleString('id-ID');
+    const vName = preset ? preset.varian : (firstVariant ? firstVariant.name : 'LAINNYA');
+    const vPrice = preset ? preset.harga : (firstVariant ? firstVariant.price : 0);
+    const vFee = preset ? preset.fee : (firstVariant ? (firstVariant.fee !== undefined ? firstVariant.fee : storeData.defaultFee) : storeData.defaultFee);
+
+    const newItem = {
+      id: 'item_' + Date.now() + '_' + (cartIdCounter++),
+      toko: defaultStore,
+      varian: vName,
+      customVarian: preset ? (preset.customVarian || '') : '',
+      qty: preset ? Math.max(1, parseInt(preset.qty) || 1) : 1,
+      harga: vPrice,
+      fee: vFee
+    };
+
+    orderCartItems.push(newItem);
+    renderOrderCartItems();
+    calculateAllCartTotals();
+  }
+
+  function removeOrderItem(itemId) {
+    if (orderCartItems.length <= 1) {
+      showCustomAlert('Informasi', 'Pesanan harus memiliki minimal 1 item titipan.', 'ℹ️', 1200);
+      return;
+    }
+    orderCartItems = orderCartItems.filter(it => it.id !== itemId);
+    renderOrderCartItems();
+    calculateAllCartTotals();
+  }
+
+  function onItemTokoChange(itemId) {
+    const item = orderCartItems.find(it => it.id === itemId);
+    if (!item) return;
+
+    const selectEl = document.getElementById(`tokoSelect_${itemId}`);
+    if (!selectEl) return;
+
+    item.toko = selectEl.value;
+    const storeData = productCatalog[item.toko] || { defaultFee: 20000, variants: [] };
+    
+    if (storeData.variants && storeData.variants.length > 0) {
+      const first = storeData.variants[0];
+      item.varian = first.name;
+      item.harga = first.price;
+      item.fee = first.fee !== undefined ? first.fee : storeData.defaultFee;
+    } else {
+      item.varian = 'LAINNYA';
+      item.harga = 0;
+      item.fee = storeData.defaultFee || 20000;
     }
 
-    const totalFee = feePerPcs * qty;
-    const hargaJualPerPcs = (qty > 0 || harga > 0) ? (harga + feePerPcs) : 0;
-    const totalTagihan = (harga * qty) + totalFee;
+    renderOrderCartItems();
+    calculateAllCartTotals();
+  }
 
-    document.getElementById('displayHargaJual').innerText = 'Rp ' + Number(hargaJualPerPcs).toLocaleString('id-ID');
-    document.getElementById('displayTotalFee').innerText = 'Rp ' + Number(totalFee).toLocaleString('id-ID');
-    document.getElementById('displayTotalTagihan').innerText = 'Rp ' + Number(totalTagihan).toLocaleString('id-ID');
+  function onItemVarianChange(itemId) {
+    const item = orderCartItems.find(it => it.id === itemId);
+    if (!item) return;
+
+    const varSelect = document.getElementById(`varianSelect_${itemId}`);
+    if (!varSelect) return;
+
+    const selectedVal = varSelect.value;
+    const storeData = productCatalog[item.toko] || { defaultFee: 20000, variants: [] };
+
+    item.varian = selectedVal;
+    if (selectedVal === 'LAINNYA') {
+      item.harga = 0;
+      item.fee = storeData.defaultFee || 20000;
+    } else {
+      const selectedOpt = varSelect.options[varSelect.selectedIndex];
+      item.harga = parseInt(selectedOpt.getAttribute('data-harga')) || 0;
+      item.fee = parseInt(selectedOpt.getAttribute('data-fee')) || storeData.defaultFee || 20000;
+    }
+
+    renderOrderCartItems();
+    calculateAllCartTotals();
+  }
+
+  function onItemCustomVarianChange(itemId, val) {
+    const item = orderCartItems.find(it => it.id === itemId);
+    if (item) item.customVarian = val.trim();
+  }
+
+  function onItemCustomPriceChange(itemId, inputEl) {
+    const item = orderCartItems.find(it => it.id === itemId);
+    if (!item) return;
+
+    let cleanVal = inputEl.value.replace(/[^0-9]/g, '');
+    let numVal = parseInt(cleanVal) || 0;
+    item.harga = numVal;
+    inputEl.value = numVal > 0 ? 'Rp ' + numVal.toLocaleString('id-ID') : 'Rp 0';
+    calculateAllCartTotals();
+  }
+
+  function onItemQtyChange(itemId, val) {
+    const item = orderCartItems.find(it => it.id === itemId);
+    if (!item) return;
+
+    const q = Math.max(1, parseInt(val) || 1);
+    item.qty = q;
+
+    // Diskon grosir khusus Roti Segar
+    if (item.toko === 'Roti Segar') {
+      item.fee = (q >= 3) ? 4000 : 5000;
+    }
+
+    calculateAllCartTotals();
+  }
+
+  function calculateAllCartTotals() {
+    let totalItems = 0;
+    let totalQty = 0;
+    let totalModal = 0;
+    let totalFee = 0;
+    let grandTotal = 0;
+
+    orderCartItems.forEach(item => {
+      totalItems += 1;
+      const q = Math.max(1, parseInt(item.qty) || 1);
+      const h = parseInt(item.harga) || 0;
+      let f = parseInt(item.fee) || 0;
+
+      if (item.toko === 'Roti Segar') {
+        f = (q >= 3) ? 4000 : 5000;
+        item.fee = f;
+      }
+
+      const itemSubtotal = (h + f) * q;
+      totalQty += q;
+      totalModal += (h * q);
+      totalFee += (f * q);
+      grandTotal += itemSubtotal;
+
+      // Update subtotal display on card if DOM exists
+      const subEl = document.getElementById(`subtotalDisplay_${item.id}`);
+      if (subEl) {
+        subEl.innerText = 'Rp ' + itemSubtotal.toLocaleString('id-ID');
+      }
+      const feeDisplay = document.getElementById(`feeDisplay_${item.id}`);
+      if (feeDisplay) {
+        feeDisplay.value = 'Rp ' + Number(f).toLocaleString('id-ID');
+      }
+    });
+
+    const displayCountEl = document.getElementById('displayTotalItemsCount');
+    const displayModalEl = document.getElementById('displayTotalHargaProduk');
+    const displayFeeEl = document.getElementById('displayTotalFee');
+    const displayTagihanEl = document.getElementById('displayTotalTagihan');
+
+    if (displayCountEl) displayCountEl.innerText = `${totalItems} Macam Titipan (${totalQty} pcs)`;
+    if (displayModalEl) displayModalEl.innerText = 'Rp ' + totalModal.toLocaleString('id-ID');
+    if (displayFeeEl) displayFeeEl.innerText = 'Rp ' + totalFee.toLocaleString('id-ID');
+    if (displayTagihanEl) displayTagihanEl.innerText = 'Rp ' + grandTotal.toLocaleString('id-ID');
+  }
+
+  function renderOrderCartItems() {
+    const container = document.getElementById('orderItemsContainer');
+    if (!container) return;
+
+    const storeList = Object.keys(productCatalog);
+    let html = '';
+
+    orderCartItems.forEach((item, index) => {
+      const storeData = productCatalog[item.toko] || { defaultFee: 20000, variants: [] };
+      const isCustomVariant = item.varian === 'LAINNYA';
+      const itemSubtotal = ((item.harga || 0) + (item.fee || 0)) * (item.qty || 1);
+
+      // Build options for stores
+      let storeOptionsHtml = '';
+      storeList.forEach(s => {
+        storeOptionsHtml += `<option value="${s}" ${s === item.toko ? 'selected' : ''}>${s}</option>`;
+      });
+
+      // Build options for variants
+      let variantOptionsHtml = '';
+      (storeData.variants || []).forEach(v => {
+        const vFee = (v.fee !== undefined) ? v.fee : storeData.defaultFee;
+        const isSel = (v.name === item.varian);
+        variantOptionsHtml += `<option value="${v.name}" data-harga="${v.price}" data-fee="${vFee}" ${isSel ? 'selected' : ''}>${v.name} (Rp ${Number(v.price).toLocaleString('id-ID')})</option>`;
+      });
+      variantOptionsHtml += `<option value="LAINNYA" ${isCustomVariant ? 'selected' : ''}>➕ Varian Lainnya / Custom...</option>`;
+
+      html += `
+        <div class="order-item-card" id="cartCard_${item.id}">
+          <div class="d-flex justify-content-between align-items-center mb-2 pb-1 border-bottom">
+            <span class="badge bg-primary-subtle text-primary item-number-badge">📦 Titipan #${index + 1}</span>
+            ${orderCartItems.length > 1 ? `
+              <button type="button" class="btn btn-outline-danger btn-sm py-0 px-2 fw-semibold" onclick="removeOrderItem('${item.id}')" title="Hapus Item Ini" style="font-size: 0.72rem;">
+                🗑️ Hapus
+              </button>
+            ` : ''}
+          </div>
+
+          <div class="row g-2">
+            <!-- Toko -->
+            <div class="col-12 col-md-6">
+              <label class="form-label small mb-1">Toko Oleh-Oleh</label>
+              <select class="form-select form-select-sm" id="tokoSelect_${item.id}" onchange="onItemTokoChange('${item.id}')">
+                ${storeOptionsHtml}
+              </select>
+            </div>
+
+            <!-- Varian -->
+            <div class="col-12 col-md-6">
+              <label class="form-label small mb-1">Varian Produk</label>
+              <select class="form-select form-select-sm" id="varianSelect_${item.id}" onchange="onItemVarianChange('${item.id}')">
+                ${variantOptionsHtml}
+              </select>
+              <input type="text" class="form-control form-control-sm mt-1 ${isCustomVariant ? '' : 'd-none'}" 
+                     id="customVarianInput_${item.id}" placeholder="Tuliskan varian / nama produk custom..."
+                     value="${item.customVarian || ''}" oninput="onItemCustomVarianChange('${item.id}', this.value)">
+            </div>
+
+            <!-- Jumlah (Qty) -->
+            <div class="col-4">
+              <label class="form-label small mb-1">Jumlah</label>
+              <input type="number" class="form-control form-control-sm" id="qtyInput_${item.id}" min="1" value="${item.qty}" 
+                     oninput="onItemQtyChange('${item.id}', this.value)">
+            </div>
+
+            <!-- Harga Produk -->
+            <div class="col-4">
+              <label class="form-label small mb-1">Harga Asli / Pcs</label>
+              <input type="text" class="form-control form-control-sm ${isCustomVariant ? 'bg-white' : 'bg-light'} fw-semibold" 
+                     id="hargaDisplay_${item.id}" ${isCustomVariant ? '' : 'readonly'}
+                     value="Rp ${Number(item.harga || 0).toLocaleString('id-ID')}"
+                     oninput="onItemCustomPriceChange('${item.id}', this)">
+            </div>
+
+            <!-- Fee Jastip -->
+            <div class="col-4">
+              <label class="form-label small mb-1">Fee / Pcs</label>
+              <input type="text" class="form-control form-control-sm bg-light text-muted fw-semibold" 
+                     id="feeDisplay_${item.id}" readonly value="Rp ${Number(item.fee || 0).toLocaleString('id-ID')}">
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top">
+            <span class="small text-muted">Subtotal Titipan #${index + 1}:</span>
+            <strong class="text-primary small" id="subtotalDisplay_${item.id}">Rp ${Number(itemSubtotal).toLocaleString('id-ID')}</strong>
+          </div>
+        </div>
+      `;
+    });
+
+    container.innerHTML = html;
+  }
+
+  // Backward compatibility alias for catalog changes
+  function handleTokoChange() {
+    renderOrderCartItems();
+    calculateAllCartTotals();
   }
 
   // ==========================================
@@ -1665,82 +1917,153 @@
       namaCustomer: document.getElementById('namaCustomer').value.trim(),
       noWhatsapp: cleanWa,
       alamatCod: `${document.getElementById('alamatCod').value.trim()} [WA: ${rawWa}]`,
-      tokoPesanan: brand,
-      lokasiToko: `[${orderId}]`,
-      varianProduk: varian,
-      batchJastip: orderDateVal,
-      dayaTahan: "Lihat Expired Date Pada Item",
-      qty: qty,
-      hargaProduk: harga,
-      feeJastip: feePerPcs,
-      hargaJual: hargaJual,
-      totalTagihan: totalTagihan,
-      statusOrder: "Unpaid",
-      statusFulfillment: "Order Placed"
-    };
-
-    const formData = new URLSearchParams();
-    for (const key in payload) {
-      formData.append(key, payload[key]);
+  document.getElementById('orderForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    if (!orderCartItems || orderCartItems.length === 0) {
+      showCustomAlert('Perhatian', 'Tambahkan minimal 1 item titipan!', '⚠️');
+      return;
     }
 
-    fetch(SCRIPT_URL, {
-      method: 'POST',
-      body: formData
-    })
-    .then(() => {
-      lastSubmittedOrder = { ...payload, pesananReady: readyDateVal, rawWa: rawWa };
-      
-      // WhatsApp Confirmation Link for Customer
-      const waMsg = encodeURIComponent(
-        `Halo Admin Jastipinyuk Bandung! 👋\n` +
-        `Saya ingin konfirmasi pesanan jastip dengan rincian:\n\n` +
-        `*Kode Order:* ${orderId}\n` +
-        `*Nama:* ${payload.namaCustomer}\n` +
-        `*WhatsApp:* ${rawWa}\n` +
-        `*Toko:* ${payload.tokoPesanan}\n` +
-        `*Varian:* ${payload.varianProduk}\n` +
-        `*Jumlah:* ${payload.qty} pcs\n` +
-        `*Total Tagihan:* Rp ${totalTagihan.toLocaleString('id-ID')}\n` +
-        `*Estimasi Ready:* ${readyDateVal}\n\n` +
-        `Mohon info rekening pembayaran ya min. Terima kasih!`
-      );
-      document.getElementById('btnSuccessWhatsApp').href = `https://wa.me/${ADMIN_WA_NUMBER}?text=${waMsg}`;
-      
-      document.getElementById('successOrderInfo').innerHTML = `
-        Kode Order Anda: <strong class="text-primary fs-6">${orderId}</strong><br>
-        Simpan kode ini atau nomor WhatsApp Anda untuk melacak status pesanan.
-      `;
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerText = 'Menyimpan ke Cloud...';
 
-      document.getElementById('btnSuccessPdf').onclick = () => {
-        generateDirectInvoicePDF(lastSubmittedOrder);
+    const orderId = generateOrderId();
+    const rawWa = document.getElementById('noWhatsapp').value.trim();
+    const cleanWa = cleanPhoneForWhatsApp(rawWa);
+    const custName = document.getElementById('namaCustomer').value.trim();
+    const rawCod = document.getElementById('alamatCod').value.trim();
+    const orderDateVal = document.getElementById('tanggalOrder').value;
+    const readyDateVal = document.getElementById('pesananReady').value || getCleanReadyText(null, orderDateVal);
+
+    const itemsToSubmit = orderCartItems.map(item => {
+      let varianName = item.varian;
+      if (varianName === 'LAINNYA') {
+        varianName = item.customVarian || 'Varian Custom';
+      }
+      const q = Math.max(1, parseInt(item.qty) || 1);
+      const h = parseInt(item.harga) || 0;
+      const f = parseInt(item.fee) || 0;
+      const hargaJual = h + f;
+      const totalTagihan = hargaJual * q;
+
+      return {
+        orderId: orderId,
+        namaCustomer: custName,
+        noWhatsapp: cleanWa,
+        alamatCod: `${rawCod} [WA: ${rawWa}]`,
+        tokoPesanan: item.toko,
+        lokasiToko: `[${orderId}]`,
+        varianProduk: varianName,
+        batchJastip: orderDateVal,
+        dayaTahan: "Lihat Expired Date Pada Item",
+        qty: q,
+        hargaProduk: h,
+        feeJastip: f,
+        hargaJual: hargaJual,
+        totalTagihan: totalTagihan,
+        statusOrder: "Unpaid",
+        statusFulfillment: "Order Placed"
       };
-
-      orderSuccessModalEl.show();
-
-      // Reset Form
-      document.getElementById('orderForm').reset();
-      document.getElementById('tokoPesanan').value = "Tiramisusu";
-      document.getElementById('qty').value = "1";
-      const todayIso = new Date().toISOString().split('T')[0];
-      document.getElementById('tanggalOrder').value = todayIso;
-      updateReadyDate();
-      handleTokoChange();
-    })
-    .catch(err => {
-      console.error(err);
-      showCustomAlert('Gagal', 'Gagal mengirim pesanan. Periksa sambungan internet Anda.', '⚠️');
-    })
-    .finally(() => {
-      btn.disabled = false;
-      btn.innerText = '✨ Kirim Pesanan Sekarang';
     });
+
+    const postPromises = itemsToSubmit.map(payload => {
+      const formData = new URLSearchParams();
+      for (const key in payload) {
+        formData.append(key, payload[key]);
+      }
+      return fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: formData
+      });
+    });
+
+    Promise.all(postPromises)
+      .then(() => {
+        const grandTotal = itemsToSubmit.reduce((acc, it) => acc + it.totalTagihan, 0);
+        const totalQty = itemsToSubmit.reduce((acc, it) => acc + it.qty, 0);
+
+        lastSubmittedOrder = {
+          orderId: orderId,
+          namaCustomer: custName,
+          noWhatsapp: cleanWa,
+          rawWa: rawWa,
+          alamatCod: rawCod,
+          batchJastip: orderDateVal,
+          pesananReady: readyDateVal,
+          statusOrder: "Unpaid",
+          statusFulfillment: "Order Placed",
+          totalTagihan: grandTotal,
+          items: itemsToSubmit
+        };
+
+        // Formatted WhatsApp message with all items
+        let itemsListText = '';
+        itemsToSubmit.forEach((it, idx) => {
+          itemsListText += `${idx + 1}. *${it.tokoPesanan}* - ${it.varianProduk} (${it.qty} pcs) = Rp ${it.totalTagihan.toLocaleString('id-ID')}\n`;
+        });
+
+        const waMsg = encodeURIComponent(
+          `Halo Admin Jastipinyuk Bandung! 👋\n` +
+          `Saya ingin konfirmasi pesanan jastip dengan rincian:\n\n` +
+          `*Kode Order:* ${orderId}\n` +
+          `*Nama:* ${custName}\n` +
+          `*WhatsApp:* ${rawWa}\n` +
+          `*Alamat:* ${rawCod}\n` +
+          `*Estimasi Ready:* ${readyDateVal}\n\n` +
+          `*Daftar Titipan (${itemsToSubmit.length} Item):*\n` +
+          `${itemsListText}\n` +
+          `*Total Qty:* ${totalQty} pcs\n` +
+          `*Total Tagihan:* *Rp ${grandTotal.toLocaleString('id-ID')}*\n\n` +
+          `Mohon info rekening pembayaran ya min. Terima kasih!`
+        );
+
+        document.getElementById('btnSuccessWhatsApp').href = `https://wa.me/${ADMIN_WA_NUMBER}?text=${waMsg}`;
+        document.getElementById('successOrderInfo').innerHTML = `
+          Kode Order Anda: <strong class="text-primary fs-6">${orderId}</strong><br>
+          <span class="badge bg-light text-dark border my-1">${itemsToSubmit.length} Titipan (${totalQty} pcs)</span><br>
+          <small class="text-muted">Simpan kode ini atau nomor WhatsApp Anda untuk melacak status pesanan.</small>
+        `;
+
+        document.getElementById('btnSuccessPdf').onclick = () => {
+          generateDirectInvoicePDF(lastSubmittedOrder);
+        };
+
+        orderSuccessModalEl.show();
+
+        // Reset form to default 1 item
+        document.getElementById('orderForm').reset();
+        const todayIso = new Date().toISOString().split('T')[0];
+        document.getElementById('tanggalOrder').value = todayIso;
+        updateReadyDate();
+        initDefaultCart();
+      })
+      .catch(err => {
+        console.error(err);
+        showCustomAlert('Gagal', 'Gagal mengirim pesanan. Periksa koneksi internet Anda.', '⚠️');
+      })
+      .finally(() => {
+        btn.disabled = false;
+        btn.innerText = '✨ Kirim Pesanan Sekarang';
+      });
   });
 
 
   // ==========================================
-  // CUSTOMER SELF-SERVICE TRACKING
+  // CUSTOMER SELF-SERVICE TRACKING (MULTI-ITEM GROUPED)
   // ==========================================
+  function extractOrderCode(o) {
+    if (!o) return 'JB-UNKNOWN';
+    if (o.orderId && String(o.orderId).trim()) {
+      return String(o.orderId).trim();
+    }
+    if (o.lokasiToko && String(o.lokasiToko).includes('JB-')) {
+      const m = String(o.lokasiToko).match(/JB-[A-Za-z0-9-]+/);
+      if (m) return m[0];
+    }
+    return `JB-LGCY-${o.rowIndex || 1}`;
+  }
+
   function doCustomerTrackOrder() {
     const q = (document.getElementById('trackInputQuery').value || '').trim().toLowerCase();
     const container = document.getElementById('trackResultContainer');
@@ -1761,12 +2084,13 @@
         }
 
         orders = data;
+        const cleanQ = q.replace(/[^0-9a-z]/g, '');
+
         const matches = orders.filter(o => {
           const id = String(o.orderId || o.lokasiToko || '').toLowerCase();
           const cust = String(o.namaCustomer || '').toLowerCase();
           const cod = String(o.alamatCod || '').toLowerCase();
           const wa = String(o.noWhatsapp || '').toLowerCase();
-          const cleanQ = q.replace(/[^0-9a-z]/g, '');
 
           return id.includes(cleanQ) || cust.includes(q) || cod.includes(cleanQ) || wa.includes(cleanQ);
         });
@@ -1775,31 +2099,68 @@
           container.innerHTML = `
             <div class="alert alert-warning text-center small mb-0">
               Pesanan dengan kata kunci "<strong>${q}</strong>" tidak ditemukan.<br>
-              Pastikan Anda memasukkan nomor WhatsApp yang sama saat memesan.
+              Pastikan Anda memasukkan nomor WhatsApp atau Kode Order yang sesuai saat memesan.
             </div>
           `;
           return;
         }
 
-        let html = '';
-        matches.forEach((o, idx) => {
-          const payStatus = normalizePaymentStatus(o.statusOrder);
-          const logStatus = normalizeLogisticsStatus(o.statusFulfillment || o.statusOrder, payStatus);
-          const readyDate = getCleanReadyText(o.lokasiToko, o.batchJastip);
+        // Group matching items by Order Code
+        const groupedMap = new Map();
+        matches.forEach(o => {
+          const code = extractOrderCode(o);
+          if (!groupedMap.has(code)) {
+            groupedMap.set(code, []);
+          }
+          groupedMap.get(code).push(o);
+        });
 
-          // Step index (0: Placed, 1: Purchased, 2: In-Transit, 3: Delivered)
+        let html = '';
+        groupedMap.forEach((itemList, code) => {
+          const first = itemList[0];
+          const payStatus = normalizePaymentStatus(first.statusOrder);
+          const logStatus = normalizeLogisticsStatus(first.statusFulfillment || first.statusOrder, payStatus);
+          const readyDate = getCleanReadyText(first.lokasiToko, first.batchJastip);
+
           const steps = ['Order Placed', 'Purchased', 'In Transit', 'Delivered'];
           let curStepIdx = steps.indexOf(logStatus);
           if (curStepIdx === -1) curStepIdx = 0;
 
+          let itemsTableHtml = '';
+          let orderGrandTotal = 0;
+          let orderTotalQty = 0;
+
+          itemList.forEach((it, idx) => {
+            const q = Number(it.qty) || 1;
+            const h = Number(it.hargaProduk) || 0;
+            const f = Number(it.feeJastip) || 0;
+            const sub = Number(it.totalTagihan) || ((h + f) * q);
+            orderGrandTotal += sub;
+            orderTotalQty += q;
+
+            itemsTableHtml += `
+              <div class="d-flex justify-content-between align-items-center py-1 border-bottom" style="font-size: 0.76rem;">
+                <div>
+                  <strong>${it.tokoPesanan || '-'}</strong> - <span class="text-muted">${it.varianProduk || 'Original'}</span>
+                  <span class="badge bg-light text-dark border ms-1">${q} pcs</span>
+                </div>
+                <strong class="text-dark">Rp ${sub.toLocaleString('id-ID')}</strong>
+              </div>
+            `;
+          });
+
           html += `
-            <div class="card p-3 mb-3 border ${logStatus === 'Delivered' ? 'border-success' : 'border-primary-subtle'}">
+            <div class="card p-3 mb-3 border ${logStatus === 'Delivered' ? 'border-success' : 'border-primary-subtle'} shadow-sm">
               <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
                 <div>
-                  <strong class="text-primary">${o.lokasiToko && o.lokasiToko.startsWith('[JB-') ? o.lokasiToko.replace(/\[|\]/g, '') : 'Pesanan Jastip'}</strong>
-                  <span class="d-block small text-muted">${o.namaCustomer || '-'}</span>
+                  <strong class="text-primary fs-6">${code}</strong>
+                  <span class="d-block small text-dark fw-semibold">${first.namaCustomer || '-'}</span>
+                  <span class="badge bg-light text-secondary border mt-1">${itemList.length} Macam Titipan (${orderTotalQty} pcs)</span>
                 </div>
-                <span class="${getPaymentBadgeClass(payStatus)}">${payStatus}</span>
+                <div class="text-end">
+                  <span class="${getPaymentBadgeClass(payStatus)} d-block mb-1">${payStatus}</span>
+                  <span class="${getLogisticsBadgeClass(logStatus)}">${logStatus}</span>
+                </div>
               </div>
 
               <!-- Visual Stepper Progress -->
@@ -1812,7 +2173,7 @@
                 <div class="tracking-step ${curStepIdx >= 1 ? (curStepIdx > 1 ? 'done' : 'active') : ''}">
                   <div class="tracking-step-dot">${curStepIdx > 1 ? '✓' : '2'}</div>
                   <strong>Sedang Dibelanjakan</strong>
-                  <div class="text-muted" style="font-size: 0.72rem;">Tim sedang membelanjakan pesanan di ${o.tokoPesanan || 'Bandung'}.</div>
+                  <div class="text-muted" style="font-size: 0.72rem;">Tim sedang membelanjakan oleh-oleh titipan Anda di Bandung.</div>
                 </div>
                 <div class="tracking-step ${curStepIdx >= 2 ? (curStepIdx > 2 ? 'done' : 'active') : ''}">
                   <div class="tracking-step-dot">${curStepIdx > 2 ? '✓' : '3'}</div>
@@ -1822,16 +2183,22 @@
                 <div class="tracking-step ${curStepIdx >= 3 ? 'done' : ''}">
                   <div class="tracking-step-dot">${curStepIdx >= 3 ? '✓' : '4'}</div>
                   <strong>Pesanan Selesai</strong>
-                  <div class="text-muted" style="font-size: 0.72rem;">Pesanan telah diterima oleh pemesan.</div>
+                  <div class="text-muted" style="font-size: 0.72rem;">Pesanan telah diserahkan & diterima oleh pemesan.</div>
                 </div>
               </div>
 
+              <!-- Rincian Produk -->
               <div class="bg-light p-2 rounded small mt-2">
-                <div class="d-flex justify-content-between"><span>Toko:</span> <strong>${o.tokoPesanan || '-'}</strong></div>
-                <div class="d-flex justify-content-between"><span>Varian:</span> <strong>${o.varianProduk || '-'}</strong></div>
-                <div class="d-flex justify-content-between"><span>Jumlah:</span> <strong>${o.qty || 1} pcs</strong></div>
-                <div class="d-flex justify-content-between"><span>Estimasi Ready:</span> <strong class="text-primary">${readyDate}</strong></div>
-                <div class="d-flex justify-content-between border-top pt-1 mt-1"><span>Total Tagihan:</span> <strong class="text-primary fs-6">Rp ${Number(o.totalTagihan || 0).toLocaleString('id-ID')}</strong></div>
+                <span class="fw-bold d-block mb-1 text-secondary" style="font-size: 0.72rem;">DAFTAR TITIPAN:</span>
+                ${itemsTableHtml}
+                <div class="d-flex justify-content-between pt-2 mt-1">
+                  <span class="text-muted">Estimasi Ready:</span>
+                  <strong class="text-primary">${readyDate}</strong>
+                </div>
+                <div class="d-flex justify-content-between border-top pt-2 mt-1">
+                  <span class="fw-bold">Total Tagihan:</span>
+                  <strong class="text-primary fs-6">Rp ${orderGrandTotal.toLocaleString('id-ID')}</strong>
+                </div>
               </div>
             </div>
           `;
@@ -1846,37 +2213,72 @@
   }
 
   // ==========================================
-  // INVOICE & PDF GENERATOR
+  // INVOICE & PDF GENERATOR (MULTI-ITEM CAPABLE)
   // ==========================================
-  function generateDirectInvoicePDF(o) {
-    const qty = Number(o.qty) || 1;
-    const hargaProduk = Number(o.hargaProduk) || 0;
-    const feeJastip = Number(o.feeJastip) || 0;
-    const subtotal = (hargaProduk + feeJastip) * qty;
+  function generateDirectInvoicePDF(orderData) {
+    if (!orderData) return;
+    const items = Array.isArray(orderData.items) ? orderData.items : [orderData];
+    const first = items[0] || {};
 
-    document.getElementById('invNumber').innerText = o.orderId || 'INV-2026';
-    document.getElementById('invCustName').innerText = o.namaCustomer || '-';
-    document.getElementById('invCustWa').innerText = o.rawWa || o.noWhatsapp || '-';
-    document.getElementById('invCustAddress').innerText = o.alamatCod || '-';
-    document.getElementById('invDate').innerText = calculateReadyDate(o.batchJastip).formattedFull || o.batchJastip;
-    document.getElementById('invReadyDate').innerText = o.pesananReady || getCleanReadyText(null, o.batchJastip);
-    document.getElementById('invPayStatus').innerText = normalizePaymentStatus(o.statusOrder);
-    document.getElementById('invToko').innerText = o.tokoPesanan || '-';
-    document.getElementById('invVarian').innerText = `Varian: ${o.varianProduk || '-'}`;
-    document.getElementById('invQty').innerText = `${qty} pcs`;
-    document.getElementById('invItemPrice').innerText = 'Rp ' + hargaProduk.toLocaleString('id-ID');
-    document.getElementById('invFeePrice').innerText = 'Rp ' + feeJastip.toLocaleString('id-ID');
-    document.getElementById('invSubtotal').innerText = 'Rp ' + subtotal.toLocaleString('id-ID');
-    document.getElementById('invSumItem').innerText = 'Rp ' + (hargaProduk * qty).toLocaleString('id-ID');
-    document.getElementById('invSumFee').innerText = 'Rp ' + (feeJastip * qty).toLocaleString('id-ID');
-    document.getElementById('invGrandTotal').innerText = 'Rp ' + subtotal.toLocaleString('id-ID');
+    const orderCode = orderData.orderId || first.orderId || (first.lokasiToko ? first.lokasiToko.replace(/\[|\]/g, '') : 'INV-2026');
+    const custName = orderData.namaCustomer || first.namaCustomer || '-';
+    const custWa = orderData.rawWa || orderData.noWhatsapp || first.noWhatsapp || '-';
+    const custAddr = orderData.alamatCod || first.alamatCod || '-';
+    const orderDateFormatted = calculateReadyDate(orderData.batchJastip || first.batchJastip).formattedFull || '-';
+    const readyDateFormatted = orderData.pesananReady || getCleanReadyText(first.lokasiToko, first.batchJastip);
+    const payStatus = normalizePaymentStatus(orderData.statusOrder || first.statusOrder);
+
+    document.getElementById('invNumber').innerText = orderCode;
+    document.getElementById('invCustName').innerText = custName;
+    document.getElementById('invCustWa').innerText = custWa;
+    document.getElementById('invCustAddress').innerText = custAddr;
+    document.getElementById('invDate').innerText = orderDateFormatted;
+    document.getElementById('invReadyDate').innerText = readyDateFormatted;
+    document.getElementById('invPayStatus').innerText = payStatus;
+
+    const tbody = document.getElementById('invItemsTbody');
+    if (tbody) {
+      tbody.innerHTML = '';
+      let sumModal = 0;
+      let sumFee = 0;
+      let sumGrand = 0;
+
+      items.forEach(it => {
+        const q = Number(it.qty) || 1;
+        const h = Number(it.hargaProduk) || 0;
+        const f = Number(it.feeJastip) || 0;
+        const sub = Number(it.totalTagihan) || ((h + f) * q);
+
+        sumModal += (h * q);
+        sumFee += (f * q);
+        sumGrand += sub;
+
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid #e2e8f0';
+        tr.innerHTML = `
+          <td style="padding: 8px 6px;">
+            <strong style="color: #0f172a;">${it.tokoPesanan || '-'}</strong><br>
+            <span style="color: #64748b; font-size: 11px;">${it.varianProduk || 'Original'}</span>
+          </td>
+          <td style="padding: 8px 6px; text-align: center; font-weight: bold;">${q}</td>
+          <td style="padding: 8px 6px; text-align: right;">Rp ${h.toLocaleString('id-ID')}</td>
+          <td style="padding: 8px 6px; text-align: right;">Rp ${f.toLocaleString('id-ID')}</td>
+          <td style="padding: 8px 6px; text-align: right; font-weight: bold; color: #2563eb;">Rp ${sub.toLocaleString('id-ID')}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('invSumItem').innerText = 'Rp ' + sumModal.toLocaleString('id-ID');
+      document.getElementById('invSumFee').innerText = 'Rp ' + sumFee.toLocaleString('id-ID');
+      document.getElementById('invGrandTotal').innerText = 'Rp ' + sumGrand.toLocaleString('id-ID');
+    }
 
     const element = document.getElementById('invoicePdfTemplate');
     element.style.display = 'block';
 
     const opt = {
       margin:       10,
-      filename:     `Invoice_${(o.namaCustomer || 'Customer').replace(/[^a-zA-Z0-9]/g, '_')}.pdf`,
+      filename:     `Invoice_${orderCode}_${custName.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`,
       image:        { type: 'jpeg', quality: 0.98 },
       html2canvas:  { scale: 2 },
       jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
@@ -1888,23 +2290,44 @@
     });
   }
 
-  function generateInvoicePDF(idx) {
-    const o = orders[idx];
-    if (!o) return;
-    generateDirectInvoicePDF(o);
+  function generateInvoicePDF(orderIdentifier) {
+    if (typeof orderIdentifier === 'string') {
+      const group = orders.filter(o => extractOrderCode(o) === orderIdentifier);
+      if (group.length > 0) {
+        generateDirectInvoicePDF({ orderId: orderIdentifier, items: group });
+        return;
+      }
+    }
+    const o = orders[orderIdentifier];
+    if (o) {
+      const code = extractOrderCode(o);
+      const group = orders.filter(item => extractOrderCode(item) === code);
+      generateDirectInvoicePDF({ orderId: code, items: group.length > 0 ? group : [o] });
+    }
   }
 
   // ==========================================
   // WHATSAPP QUICK BILLING SENDER FOR ADMIN
   // ==========================================
-  function sendWhatsAppBill(idx) {
-    const o = orders[idx];
-    if (!o) return;
+  function sendWhatsAppBill(orderIdentifier) {
+    let orderGroup = [];
+    if (typeof orderIdentifier === 'number') {
+      const target = orders[orderIdentifier];
+      if (!target) return;
+      const code = extractOrderCode(target);
+      orderGroup = orders.filter(o => extractOrderCode(o) === code);
+      if (orderGroup.length === 0) orderGroup = [target];
+    } else {
+      orderGroup = orders.filter(o => extractOrderCode(o) === orderIdentifier);
+      if (orderGroup.length === 0) return;
+    }
 
-    // Extract phone number from alamatCod or noWhatsapp
-    let phone = o.noWhatsapp || '';
-    if (!phone && o.alamatCod && o.alamatCod.includes('WA:')) {
-      const match = o.alamatCod.match(/WA:\s*([0-9]+)/i);
+    const first = orderGroup[0];
+    const orderCode = extractOrderCode(first);
+
+    let phone = first.noWhatsapp || '';
+    if (!phone && first.alamatCod && first.alamatCod.includes('WA:')) {
+      const match = first.alamatCod.match(/WA:\s*([0-9]+)/i);
       if (match) phone = match[1];
     }
     phone = cleanPhoneForWhatsApp(phone);
@@ -1915,20 +2338,33 @@
       if (!phone) return;
     }
 
-    const payStatus = normalizePaymentStatus(o.statusOrder);
-    const readyText = getCleanReadyText(o.lokasiToko, o.batchJastip);
-    const total = Number(o.totalTagihan || 0).toLocaleString('id-ID');
+    const payStatus = normalizePaymentStatus(first.statusOrder);
+    const readyText = getCleanReadyText(first.lokasiToko, first.batchJastip);
+
+    let itemsListText = '';
+    let grandTotal = 0;
+    let totalQty = 0;
+
+    orderGroup.forEach((it, idx) => {
+      const q = Number(it.qty) || 1;
+      const h = Number(it.hargaProduk) || 0;
+      const f = Number(it.feeJastip) || 0;
+      const sub = Number(it.totalTagihan) || ((h + f) * q);
+      grandTotal += sub;
+      totalQty += q;
+
+      itemsListText += `${idx + 1}. *${it.tokoPesanan}* - ${it.varianProduk || 'Original'} (${q} pcs) = Rp ${sub.toLocaleString('id-ID')}\n`;
+    });
 
     const msg = encodeURIComponent(
-      `Halo Kak *${o.namaCustomer || 'Pelanggan'}*! 👋\n` +
+      `Halo Kak *${first.namaCustomer || 'Pelanggan'}*! 👋\n` +
       `Terima kasih telah memesan jastip di *Jastipinyuk Bandung*.\n\n` +
-      `📋 *Rincian Pesanan:* \n` +
-      `• Toko: ${o.tokoPesanan}\n` +
-      `• Varian: ${o.varianProduk}\n` +
-      `• Jumlah: ${o.qty || 1} pcs\n` +
-      `• Estimasi Ready: ${readyText}\n` +
-      `• Status Pembayaran: *${payStatus}*\n\n` +
-      `💰 *Total Tagihan:* *Rp ${total}*\n\n` +
+      `📋 *Rincian Pesanan (Kode: ${orderCode}):*\n` +
+      `${itemsListText}\n` +
+      `📦 *Total Titipan:* ${totalQty} pcs (${orderGroup.length} macam item)\n` +
+      `🗓️ *Estimasi Ready:* ${readyText}\n` +
+      `💳 *Status Pembayaran:* *${payStatus}*\n\n` +
+      `💰 *Total Tagihan:* *Rp ${grandTotal.toLocaleString('id-ID')}*\n\n` +
       `Silakan transfer pembayaran dan kirimkan bukti transfer ke nomor ini ya kak.\n` +
       `Terima kasih banyak! 🙏`
     );
@@ -2456,6 +2892,149 @@
     });
   }
 
+  // ==========================================
+  // VIEW MODE & KPI COLLAPSE STATE
+  // ==========================================
+  let currentAdminViewMode = 'COMPACT'; // 'COMPACT' | 'DETAILED'
+  let isKpiCollapsed = false;
+
+  function toggleKpiCollapse() {
+    isKpiCollapsed = !isKpiCollapsed;
+    const container = document.getElementById('kpiCardsContainer');
+    const btn = document.getElementById('btnToggleKpiCollapse');
+    if (container) {
+      if (isKpiCollapsed) {
+        container.classList.add('d-none');
+        if (btn) btn.innerHTML = '➕ Tampilkan KPI';
+      } else {
+        container.classList.remove('d-none');
+        if (btn) btn.innerHTML = '➖ Ciutkan KPI';
+      }
+    }
+  }
+
+  function switchAdminViewMode(mode) {
+    currentAdminViewMode = mode;
+    const btnCompact = document.getElementById('btnViewModeCompact');
+    const btnDetailed = document.getElementById('btnViewModeDetailed');
+    if (mode === 'COMPACT') {
+      if (btnCompact) {
+        btnCompact.className = 'btn btn-primary fw-semibold';
+      }
+      if (btnDetailed) {
+        btnDetailed.className = 'btn btn-outline-primary fw-semibold';
+      }
+    } else {
+      if (btnCompact) {
+        btnCompact.className = 'btn btn-outline-primary fw-semibold';
+      }
+      if (btnDetailed) {
+        btnDetailed.className = 'btn btn-primary fw-semibold';
+      }
+    }
+    renderTableHead();
+    renderTable();
+  }
+
+  function renderTableHead() {
+    const tr = document.getElementById('tableHeadRow');
+    if (!tr) return;
+    if (currentAdminViewMode === 'COMPACT') {
+      tr.innerHTML = `
+        <th style="width: 38px;" class="text-center">#</th>
+        <th style="width: 140px;">KODE ORDER</th>
+        <th style="width: 185px;">PEMESAN & KONTAK</th>
+        <th>TITIPAN OLEH-OLEH</th>
+        <th style="width: 130px;">JADWAL READY</th>
+        <th style="width: 120px;">TOTAL TAGIHAN</th>
+        <th style="width: 135px;">STATUS BAYAR</th>
+        <th style="width: 135px;">ORDER TRACKING</th>
+        <th style="width: 135px;" class="text-center">AKSI</th>
+      `;
+    } else {
+      tr.innerHTML = `
+        <th style="width: 38px;" class="text-center">#</th>
+        <th style="width: 110px;">KODE</th>
+        <th style="width: 150px;">CUSTOMER</th>
+        <th style="width: 140px;">ALAMAT COD</th>
+        <th style="width: 130px;">TOKO</th>
+        <th style="width: 130px;">VARIAN RASA</th>
+        <th style="width: 100px;">READY</th>
+        <th style="width: 45px;" class="text-center">QTY</th>
+        <th style="width: 110px;">TAGIHAN</th>
+        <th style="width: 135px;">STATUS BAYAR</th>
+        <th style="width: 135px;">ORDER TRACKING</th>
+        <th style="width: 135px;" class="text-center">AKSI</th>
+      `;
+    }
+  }
+
+  function toggleOrderRowAccordion(safeId) {
+    const el = document.getElementById('subrow-' + safeId);
+    const btn = document.getElementById('btn-acc-' + safeId);
+    if (!el) return;
+    if (el.classList.contains('d-none')) {
+      el.classList.remove('d-none');
+      if (btn) btn.innerHTML = '▲ Tutup';
+    } else {
+      el.classList.add('d-none');
+      if (btn) btn.innerHTML = '▼ Rincian';
+    }
+  }
+
+  function updateGroupStatusDirect(orderCode, fieldName, newVal) {
+    if (!currentLoggedInAdmin || currentLoggedInAdmin.role !== 'superadmin') {
+      showCustomAlert('Akses Ditolak', 'Hanya Superadmin yang berhak mengubah status pesanan.', '🚫');
+      return;
+    }
+
+    const group = orders.filter(o => extractOrderCode(o) === orderCode);
+    if (!group || group.length === 0) return;
+
+    // Optimistic UI update
+    group.forEach(o => {
+      if (fieldName === 'statusOrder') o.statusOrder = newVal;
+      if (fieldName === 'statusFulfillment') o.statusFulfillment = newVal;
+    });
+    renderTable();
+
+    // Send editOrder payload for each item
+    const promises = group.map(o => {
+      const payload = new URLSearchParams();
+      payload.append('action', 'editOrder');
+      payload.append('rowIndex', o.rowIndex);
+      payload.append('namaCustomer', o.namaCustomer || '');
+      payload.append('alamatCod', o.alamatCod || '');
+      payload.append('tokoPesanan', o.tokoPesanan || '');
+      payload.append('lokasiToko', o.lokasiToko || '-');
+      payload.append('varianProduk', o.varianProduk || '');
+      payload.append('batchJastip', formatCleanDate(o.batchJastip));
+      payload.append('dayaTahan', o.dayaTahan || 'Lihat Expired Date Pada Item');
+      payload.append('qty', o.qty || 1);
+      payload.append('hargaProduk', o.hargaProduk || 0);
+      payload.append('feeJastip', o.feeJastip || 0);
+      payload.append('hargaJual', o.hargaJual || 0);
+      payload.append('totalTagihan', o.totalTagihan || 0);
+      payload.append('statusOrder', fieldName === 'statusOrder' ? newVal : normalizePaymentStatus(o.statusOrder));
+      payload.append('statusFulfillment', fieldName === 'statusFulfillment' ? newVal : normalizeLogisticsStatus(o.statusFulfillment, o.statusOrder));
+
+      return fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: payload
+      });
+    });
+
+    Promise.all(promises)
+      .then(() => {
+        showCustomAlert('Berhasil Diubah', `Status untuk ${group.length} item berhasil diperbarui!`, '✅', 1200);
+      })
+      .catch(err => {
+        console.error(err);
+        showCustomAlert('Gagal', 'Sebagian status gagal diperbarui ke cloud.', '⚠️');
+        fetchOrders();
+      });
+  }
+
   function renderTable() {
     const search = (document.getElementById('searchFilter').value || '').trim().toLowerCase();
     const filterPay = document.getElementById('filterPayStatus').value;
@@ -2531,14 +3110,21 @@
       }
     });
 
-    document.getElementById('sumFullPayment').innerText = 'Rp ' + sumFullPay.toLocaleString('id-ID');
-    document.getElementById('sumOrderOnly').innerText = 'Rp ' + sumOrderOnlyVal.toLocaleString('id-ID');
-    document.getElementById('sumFeeLunas').innerText = 'Rp ' + sumFeeLunasVal.toLocaleString('id-ID');
-    document.getElementById('sumFeeBelumLunas').innerText = 'Rp ' + sumFeeBelumLunasVal.toLocaleString('id-ID');
-    document.getElementById('sumPendapatanTerkumpul').innerText = 'Rp ' + sumTotalModalAsliKeseluruhan.toLocaleString('id-ID');
-    document.getElementById('sumFeeKeseluruhan').innerText = 'Rp ' + sumTotalFeeKeseluruhan.toLocaleString('id-ID');
+    const elFullPay = document.getElementById('sumFullPayment');
+    const elFeeLunas = document.getElementById('sumFeeLunas');
+    const elFeeBelumLunas = document.getElementById('sumFeeBelumLunas');
+    const elFeeTotal = document.getElementById('sumFeeKeseluruhan');
+    const elOrderOnly = document.getElementById('sumOrderOnly');
+    const elPendapatan = document.getElementById('sumPendapatanTerkumpul');
 
-    // 2. Orders Table filtering & rendering
+    if (elFullPay) elFullPay.innerText = 'Rp ' + sumFullPay.toLocaleString('id-ID');
+    if (elFeeLunas) elFeeLunas.innerText = 'Rp ' + sumFeeLunasVal.toLocaleString('id-ID');
+    if (elFeeBelumLunas) elFeeBelumLunas.innerText = 'Rp ' + sumFeeBelumLunasVal.toLocaleString('id-ID');
+    if (elFeeTotal) elFeeTotal.innerText = 'Rp ' + sumTotalFeeKeseluruhan.toLocaleString('id-ID');
+    if (elOrderOnly) elOrderOnly.innerText = 'Rp ' + sumOrderOnlyVal.toLocaleString('id-ID');
+    if (elPendapatan) elPendapatan.innerText = 'Rp ' + sumTotalModalAsliKeseluruhan.toLocaleString('id-ID');
+
+    // 2. Filter Orders
     const filtered = orders.filter(o => {
       const nama = String(o.namaCustomer || '').toLowerCase();
       const alamat = String(o.alamatCod || '').toLowerCase();
@@ -2546,16 +3132,20 @@
       const lokasi = String(o.lokasiToko || '').toLowerCase();
       const varian = String(o.varianProduk || '').toLowerCase();
       const tgl = String(o.batchJastip || '').toLowerCase();
+      const code = extractOrderCode(o).toLowerCase();
+      const wa = String(o.noWhatsapp || '').toLowerCase();
       
       const payStatus = normalizePaymentStatus(o.statusOrder);
       const logStatus = normalizeLogisticsStatus(o.statusFulfillment || o.statusOrder, payStatus);
 
       const matchSearch = !search || 
                           nama.includes(search) || 
+                          wa.includes(search) ||
                           alamat.includes(search) || 
                           toko.includes(search) || 
                           lokasi.includes(search) || 
-                          varian.includes(search) ||
+                          varian.includes(search) || 
+                          code.includes(search) ||
                           tgl.includes(search) ||
                           payStatus.toLowerCase().includes(search) ||
                           logStatus.toLowerCase().includes(search);
@@ -2566,138 +3156,404 @@
       return matchSearch && matchPay && matchLog;
     });
 
-    document.getElementById('totalOrderBadge').innerText = `Total: ${filtered.length}`;
-
-    if (filtered.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="13" class="text-center py-3 text-muted">Belum ada pesanan yang sesuai.</td></tr>`;
-      return;
-    }
-
     const isSuperAdmin = currentLoggedInAdmin && currentLoggedInAdmin.role === 'superadmin';
 
-    filtered.forEach((o, index) => {
-      const readyVal = getCleanReadyText(o.lokasiToko, o.batchJastip);
-      const orderDateInfo = calculateReadyDate(o.batchJastip);
-      const payStatus = normalizePaymentStatus(o.statusOrder);
-      const logStatus = normalizeLogisticsStatus(o.statusFulfillment || o.statusOrder, payStatus);
-      
-      const orderCode = (o.lokasiToko && o.lokasiToko.startsWith('[JB-')) 
-                        ? o.lokasiToko.replace(/\[|\]/g, '') 
-                        : (o.orderId || `JB-${index + 1}`);
+    // ====================================================
+    // MODE RINGKAS (GROUPED PER ORDER) - DEFAULT & COMPACT
+    // ====================================================
+    if (currentAdminViewMode === 'COMPACT') {
+      const orderGroupsMap = new Map();
+      filtered.forEach(o => {
+        const code = extractOrderCode(o);
+        if (!orderGroupsMap.has(code)) {
+          orderGroupsMap.set(code, []);
+        }
+        orderGroupsMap.get(code).push(o);
+      });
 
-      const paymentCellHtml = isSuperAdmin ? `
-        <select class="form-select form-select-sm select-status-table ${getPaymentBadgeClass(payStatus)}" 
-                onchange="updateSingleStatusDirect(${o.rowIndex}, 'statusOrder', this.value)">
-          <option value="Full Payment" ${payStatus === 'Full Payment' ? 'selected' : ''}>Full Payment</option>
-          <option value="Order Only" ${payStatus === 'Order Only' ? 'selected' : ''}>Order Only</option>
-          <option value="Fee Only" ${payStatus === 'Fee Only' ? 'selected' : ''}>Fee Only</option>
-          <option value="Unpaid" ${payStatus === 'Unpaid' ? 'selected' : ''}>Unpaid</option>
-          <option value="Refunded" ${payStatus === 'Refunded' ? 'selected' : ''}>Refunded</option>
-        </select>
-      ` : `<span class="${getPaymentBadgeClass(payStatus)}">${payStatus}</span>`;
+      const totalOrdersCount = orderGroupsMap.size;
+      document.getElementById('totalOrderBadge').innerText = `${totalOrdersCount} Pesanan (${filtered.length} Item)`;
 
-      const trackingCellHtml = isSuperAdmin ? `
-        <select class="form-select form-select-sm select-status-table ${getLogisticsBadgeClass(logStatus)}" 
-                onchange="updateSingleStatusDirect(${o.rowIndex}, 'statusFulfillment', this.value)">
-          <option value="Order Placed" ${logStatus === 'Order Placed' ? 'selected' : ''}>Order Placed</option>
-          <option value="Purchased" ${logStatus === 'Purchased' ? 'selected' : ''}>Purchased</option>
-          <option value="In Transit" ${logStatus === 'In Transit' ? 'selected' : ''}>In Transit</option>
-          <option value="Delivered" ${logStatus === 'Delivered' ? 'selected' : ''}>Delivered</option>
-          <option value="Cancelled" ${logStatus === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
-        </select>
-      ` : `<span class="${getLogisticsBadgeClass(logStatus)}">${logStatus}</span>`;
+      if (totalOrdersCount === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" class="text-center py-4 text-muted">Belum ada pesanan yang sesuai filter.</td></tr>`;
+        return;
+      }
 
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td class="text-center text-muted fw-semibold">${index + 1}</td>
-        <td><span class="badge bg-light text-primary border">${orderCode}</span></td>
-        <td>
-          <div class="fw-bold">${o.namaCustomer || '-'}</div>
-          <small class="text-muted">${o.noWhatsapp ? '📱 ' + o.noWhatsapp : ''}</small>
-        </td>
-        <td><span class="text-muted small">📍 ${o.alamatCod || '-'}</span></td>
-        <td><span class="store-badge">${o.tokoPesanan || '-'}</span></td>
-        <td>
-          <span class="badge bg-primary-subtle text-primary border px-2 py-1">
-            ${o.varianProduk && o.varianProduk !== '-' ? o.varianProduk : 'Original'}
-          </span>
-        </td>
-        <td><span class="small fw-semibold">${orderDateInfo.formattedFull || formatCleanDate(o.batchJastip)}</span></td>
-        <td>
-          <span class="badge bg-light text-dark border px-2 py-1">
-            🗓️ ${readyVal || '-'}
-          </span>
-        </td>
-        <td><strong>${o.qty || 1}</strong></td>
-        <td><strong class="text-primary">Rp ${Number(o.totalTagihan || 0).toLocaleString('id-ID')}</strong></td>
-        <td>${paymentCellHtml}</td>
-        <td>${trackingCellHtml}</td>
-        <td class="text-center">
-          <div class="btn-group" role="group">
-            <button class="btn btn-outline-success btn-sm py-0 px-2" title="Kirim Tagihan ke WhatsApp" onclick="sendWhatsAppBill(${index})">💬</button>
-            <button class="btn btn-outline-secondary btn-sm py-0 px-2" title="Unduh Invoice PDF" onclick="generateInvoicePDF(${index})">🧾</button>
-            <button class="btn btn-outline-info btn-sm py-0 px-2" title="Lihat Detail" onclick="showPreview(${index})">👁️</button>
-            <button class="btn btn-outline-primary btn-sm py-0 px-2" title="Edit Pesanan" onclick="directEditOrder(${index})">✏️</button>
-            ${isSuperAdmin ? `<button class="btn btn-outline-danger btn-sm py-0 px-2" title="Hapus Pesanan" onclick="openDeleteModal(${index})">🗑️</button>` : ''}
-          </div>
-        </td>
-      `;
-      tbody.appendChild(tr);
-    });
+      let groupIndex = 0;
+      orderGroupsMap.forEach((items, orderCode) => {
+        groupIndex++;
+        const first = items[0];
+        const safeId = orderCode.replace(/[^a-zA-Z0-9_-]/g, '_');
+        const readyVal = getCleanReadyText(first.lokasiToko, first.batchJastip);
+        const orderDateInfo = calculateReadyDate(first.batchJastip);
+        const payStatus = normalizePaymentStatus(first.statusOrder);
+        const logStatus = normalizeLogisticsStatus(first.statusFulfillment || first.statusOrder, payStatus);
+
+        let totalTagihan = 0;
+        let totalQty = 0;
+
+        items.forEach(it => {
+          const q = Number(it.qty) || 1;
+          const h = Number(it.hargaProduk) || 0;
+          const f = Number(it.feeJastip) || 0;
+          const sub = Number(it.totalTagihan) || ((h + f) * q);
+          totalTagihan += sub;
+          totalQty += q;
+        });
+
+        const storePillsHtml = items.map(it => {
+          const v = it.varianProduk && it.varianProduk !== '-' ? `<span class="text-muted">(${it.varianProduk})</span>` : '';
+          return `<span class="item-pill"><strong class="text-dark">${it.tokoPesanan || '-'}</strong> ${v} <span class="badge bg-secondary-subtle text-dark ms-1">${it.qty || 1}x</span></span>`;
+        }).join('');
+
+        const paymentCellHtml = isSuperAdmin ? `
+          <select class="form-select form-select-sm select-status-table ${getPaymentBadgeClass(payStatus)}" 
+                  onchange="updateGroupStatusDirect('${orderCode}', 'statusOrder', this.value)">
+            <option value="Full Payment" ${payStatus === 'Full Payment' ? 'selected' : ''}>Full Payment</option>
+            <option value="Order Only" ${payStatus === 'Order Only' ? 'selected' : ''}>Order Only</option>
+            <option value="Fee Only" ${payStatus === 'Fee Only' ? 'selected' : ''}>Fee Only</option>
+            <option value="Unpaid" ${payStatus === 'Unpaid' ? 'selected' : ''}>Unpaid</option>
+            <option value="Refunded" ${payStatus === 'Refunded' ? 'selected' : ''}>Refunded</option>
+          </select>
+        ` : `<span class="${getPaymentBadgeClass(payStatus)}">${payStatus}</span>`;
+
+        const trackingCellHtml = isSuperAdmin ? `
+          <select class="form-select form-select-sm select-status-table ${getLogisticsBadgeClass(logStatus)}" 
+                  onchange="updateGroupStatusDirect('${orderCode}', 'statusFulfillment', this.value)">
+            <option value="Order Placed" ${logStatus === 'Order Placed' ? 'selected' : ''}>Order Placed</option>
+            <option value="Purchased" ${logStatus === 'Purchased' ? 'selected' : ''}>Purchased</option>
+            <option value="In Transit" ${logStatus === 'In Transit' ? 'selected' : ''}>In Transit</option>
+            <option value="Delivered" ${logStatus === 'Delivered' ? 'selected' : ''}>Delivered</option>
+            <option value="Cancelled" ${logStatus === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+          </select>
+        ` : `<span class="${getLogisticsBadgeClass(logStatus)}">${logStatus}</span>`;
+
+        // Main Compact Row
+        const trMain = document.createElement('tr');
+        trMain.className = 'table-row-group';
+        trMain.innerHTML = `
+          <td class="text-center text-muted fw-semibold">${groupIndex}</td>
+          <td>
+            <div class="d-flex align-items-center flex-wrap gap-1">
+              <span class="badge bg-light text-primary border fw-semibold">${orderCode}</span>
+              ${items.length > 1 ? `<span class="badge bg-primary text-white" style="font-size:0.62rem;">${items.length} item</span>` : ''}
+            </div>
+          </td>
+          <td>
+            <div class="fw-bold text-dark">${first.namaCustomer || '-'}</div>
+            <div class="d-flex align-items-center gap-1">
+              <small class="text-muted">${first.noWhatsapp ? '📱 ' + first.noWhatsapp : ''}</small>
+            </div>
+            <div class="text-muted text-truncate" style="font-size: 0.72rem; max-width: 180px;" title="${first.alamatCod || '-'}">
+              📍 ${first.alamatCod || '-'}
+            </div>
+          </td>
+          <td>
+            <div class="d-flex flex-wrap gap-1 align-items-center">
+              ${storePillsHtml}
+              <button type="button" class="btn btn-outline-secondary btn-sm py-0 px-1 border-0" id="btn-acc-${safeId}" onclick="toggleOrderRowAccordion('${safeId}')" style="font-size:0.7rem;" title="Buka rincian item">
+                ▼ Rincian
+              </button>
+            </div>
+          </td>
+          <td>
+            <span class="badge bg-light text-dark border px-2 py-1">🗓️ ${readyVal || '-'}</span>
+            <div class="text-muted mt-1" style="font-size: 0.7rem;">${orderDateInfo.formattedFull || formatCleanDate(first.batchJastip)}</div>
+          </td>
+          <td>
+            <strong class="text-primary">Rp ${totalTagihan.toLocaleString('id-ID')}</strong>
+            <div class="text-muted" style="font-size: 0.7rem;">(${totalQty} pcs total)</div>
+          </td>
+          <td>${paymentCellHtml}</td>
+          <td>${trackingCellHtml}</td>
+          <td class="text-center">
+            <div class="btn-group" role="group">
+              <button class="btn btn-outline-success btn-sm py-0 px-2" title="Kirim Tagihan WhatsApp Seluruh Pesanan" onclick="sendWhatsAppBill('${orderCode}')">💬</button>
+              <button class="btn btn-outline-secondary btn-sm py-0 px-2" title="Unduh Invoice PDF Seluruh Pesanan" onclick="generateInvoicePDF('${orderCode}')">🧾</button>
+              <button class="btn btn-outline-info btn-sm py-0 px-2" title="Lihat Rincian Lengkap" onclick="showPreview('${orderCode}')">👁️</button>
+              <button class="btn btn-outline-primary btn-sm py-0 px-2" title="Edit Pesanan" onclick="directEditOrder('${orderCode}')">✏️</button>
+              ${isSuperAdmin ? `<button class="btn btn-outline-danger btn-sm py-0 px-2" title="Hapus Seluruh Pesanan" onclick="openDeleteOrderModal('${orderCode}')">🗑️</button>` : ''}
+            </div>
+          </td>
+        `;
+        tbody.appendChild(trMain);
+
+        // Sub-row (Inline Accordion Breakdown)
+        const subRow = document.createElement('tr');
+        subRow.id = `subrow-${safeId}`;
+        subRow.className = 'd-none bg-light';
+
+        let innerItemsTr = '';
+        items.forEach((it, itIdx) => {
+          const q = Number(it.qty) || 1;
+          const h = Number(it.hargaProduk) || 0;
+          const f = Number(it.feeJastip) || 0;
+          const sub = Number(it.totalTagihan) || ((h + f) * q);
+          const rawIdx = orders.indexOf(it);
+
+          innerItemsTr += `
+            <tr>
+              <td class="text-center text-muted" style="width: 25px;">${itIdx + 1}</td>
+              <td style="width: 140px;"><strong>${it.tokoPesanan || '-'}</strong></td>
+              <td>${it.varianProduk && it.varianProduk !== '-' ? it.varianProduk : 'Original'}</td>
+              <td style="width: 160px;"><span class="text-muted small">${it.dayaTahan || 'Lihat Expired Date'}</span></td>
+              <td class="text-center" style="width: 50px;"><strong>${q}</strong></td>
+              <td class="text-end" style="width: 90px;">Rp ${h.toLocaleString('id-ID')}</td>
+              <td class="text-end" style="width: 80px;">Rp ${f.toLocaleString('id-ID')}</td>
+              <td class="text-end fw-bold text-primary" style="width: 100px;">Rp ${sub.toLocaleString('id-ID')}</td>
+              <td class="text-center" style="width: 60px;">
+                <button class="btn btn-outline-primary btn-sm py-0 px-1" title="Edit Item Ini" onclick="directEditOrder(${rawIdx})" style="font-size:0.68rem;">✏️ Edit</button>
+              </td>
+            </tr>
+          `;
+        });
+
+        subRow.innerHTML = `
+          <td colspan="9" class="p-2 ps-4 pe-3 border-bottom">
+            <div class="card border-0 shadow-none bg-white p-2 rounded">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <span class="small fw-bold text-secondary">📋 Rincian Titipan #${orderCode} (${items.length} item)</span>
+                <span class="small text-muted">Pemesan: <strong>${first.namaCustomer || '-'}</strong> | Pengiriman: <strong>${first.alamatCod || '-'}</strong></span>
+              </div>
+              <div class="table-responsive">
+                <table class="table table-sm table-bordered mb-0 align-middle" style="font-size:0.75rem;">
+                  <thead class="table-light text-muted">
+                    <tr>
+                      <th class="text-center">#</th>
+                      <th>Toko</th>
+                      <th>Varian</th>
+                      <th>Daya Tahan</th>
+                      <th class="text-center">Qty</th>
+                      <th class="text-end">Harga</th>
+                      <th class="text-end">Fee Jastip</th>
+                      <th class="text-end">Subtotal</th>
+                      <th class="text-center">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${innerItemsTr}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(subRow);
+      });
+
+    } else {
+      // ====================================================
+      // MODE RINCIAN (ALL ITEMS FLAT VIEW)
+      // ====================================================
+      document.getElementById('totalOrderBadge').innerText = `${filtered.length} Item Pesanan`;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="12" class="text-center py-4 text-muted">Belum ada item pesanan yang sesuai filter.</td></tr>`;
+        return;
+      }
+
+      filtered.forEach((o, index) => {
+        const readyVal = getCleanReadyText(o.lokasiToko, o.batchJastip);
+        const orderDateInfo = calculateReadyDate(o.batchJastip);
+        const payStatus = normalizePaymentStatus(o.statusOrder);
+        const logStatus = normalizeLogisticsStatus(o.statusFulfillment || o.statusOrder, payStatus);
+        const orderCode = extractOrderCode(o);
+        const rawIdx = orders.indexOf(o);
+
+        const paymentCellHtml = isSuperAdmin ? `
+          <select class="form-select form-select-sm select-status-table ${getPaymentBadgeClass(payStatus)}" 
+                  onchange="updateSingleStatusDirect(${o.rowIndex}, 'statusOrder', this.value)">
+            <option value="Full Payment" ${payStatus === 'Full Payment' ? 'selected' : ''}>Full Payment</option>
+            <option value="Order Only" ${payStatus === 'Order Only' ? 'selected' : ''}>Order Only</option>
+            <option value="Fee Only" ${payStatus === 'Fee Only' ? 'selected' : ''}>Fee Only</option>
+            <option value="Unpaid" ${payStatus === 'Unpaid' ? 'selected' : ''}>Unpaid</option>
+            <option value="Refunded" ${payStatus === 'Refunded' ? 'selected' : ''}>Refunded</option>
+          </select>
+        ` : `<span class="${getPaymentBadgeClass(payStatus)}">${payStatus}</span>`;
+
+        const trackingCellHtml = isSuperAdmin ? `
+          <select class="form-select form-select-sm select-status-table ${getLogisticsBadgeClass(logStatus)}" 
+                  onchange="updateSingleStatusDirect(${o.rowIndex}, 'statusFulfillment', this.value)">
+            <option value="Order Placed" ${logStatus === 'Order Placed' ? 'selected' : ''}>Order Placed</option>
+            <option value="Purchased" ${logStatus === 'Purchased' ? 'selected' : ''}>Purchased</option>
+            <option value="In Transit" ${logStatus === 'In Transit' ? 'selected' : ''}>In Transit</option>
+            <option value="Delivered" ${logStatus === 'Delivered' ? 'selected' : ''}>Delivered</option>
+            <option value="Cancelled" ${logStatus === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+          </select>
+        ` : `<span class="${getLogisticsBadgeClass(logStatus)}">${logStatus}</span>`;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="text-center text-muted fw-semibold">${index + 1}</td>
+          <td><span class="badge bg-light text-primary border">${orderCode}</span></td>
+          <td>
+            <div class="fw-bold">${o.namaCustomer || '-'}</div>
+            <small class="text-muted">${o.noWhatsapp ? '📱 ' + o.noWhatsapp : ''}</small>
+          </td>
+          <td><span class="text-muted small">📍 ${o.alamatCod || '-'}</span></td>
+          <td><span class="store-badge">${o.tokoPesanan || '-'}</span></td>
+          <td>
+            <span class="badge bg-primary-subtle text-primary border px-2 py-1">
+              ${o.varianProduk && o.varianProduk !== '-' ? o.varianProduk : 'Original'}
+            </span>
+          </td>
+          <td>
+            <span class="badge bg-light text-dark border px-2 py-1">🗓️ ${readyVal || '-'}</span>
+            <div class="text-muted" style="font-size: 0.7rem;">${orderDateInfo.formattedFull || formatCleanDate(o.batchJastip)}</div>
+          </td>
+          <td class="text-center"><strong>${o.qty || 1}</strong></td>
+          <td><strong class="text-primary">Rp ${Number(o.totalTagihan || 0).toLocaleString('id-ID')}</strong></td>
+          <td>${paymentCellHtml}</td>
+          <td>${trackingCellHtml}</td>
+          <td class="text-center">
+            <div class="btn-group" role="group">
+              <button class="btn btn-outline-success btn-sm py-0 px-2" title="Kirim Tagihan ke WhatsApp" onclick="sendWhatsAppBill(${rawIdx})">💬</button>
+              <button class="btn btn-outline-secondary btn-sm py-0 px-2" title="Unduh Invoice PDF" onclick="generateInvoicePDF(${rawIdx})">🧾</button>
+              <button class="btn btn-outline-info btn-sm py-0 px-2" title="Lihat Detail" onclick="showPreview(${rawIdx})">👁️</button>
+              <button class="btn btn-outline-primary btn-sm py-0 px-2" title="Edit Pesanan" onclick="directEditOrder(${rawIdx})">✏️</button>
+              ${isSuperAdmin ? `<button class="btn btn-outline-danger btn-sm py-0 px-2" title="Hapus Item Ini" onclick="openDeleteModal(${rawIdx})">🗑️</button>` : ''}
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
   }
 
-  function showPreview(idx) {
-    const o = orders[idx];
-    if (!o) return;
+  // ==========================================
+  // DETAIL PREVIEW MODAL (MULTI-ITEM CAPABLE)
+  // ==========================================
+  function showPreview(orderIdentifier) {
+    let group = [];
+    if (typeof orderIdentifier === 'string') {
+      group = orders.filter(o => extractOrderCode(o) === orderIdentifier);
+    } else if (typeof orderIdentifier === 'number') {
+      const o = orders[orderIdentifier];
+      if (o) {
+        const code = extractOrderCode(o);
+        group = orders.filter(item => extractOrderCode(item) === code);
+        if (group.length === 0) group = [o];
+      }
+    }
+    if (!group || group.length === 0) return;
 
-    const readyText = getCleanReadyText(o.lokasiToko, o.batchJastip);
-    const orderDateRes = calculateReadyDate(o.batchJastip);
-    const payStatus = normalizePaymentStatus(o.statusOrder);
-    const logStatus = normalizeLogisticsStatus(o.statusFulfillment || o.statusOrder, payStatus);
-    const expInfo = o.dayaTahan || 'Lihat Expired Date Pada Item';
+    const first = group[0];
+    const orderCode = extractOrderCode(first);
+    const readyText = getCleanReadyText(first.lokasiToko, first.batchJastip);
+    const orderDateRes = calculateReadyDate(first.batchJastip);
+    const payStatus = normalizePaymentStatus(first.statusOrder);
+    const logStatus = normalizeLogisticsStatus(first.statusFulfillment || first.statusOrder, payStatus);
+
+    let totalGrand = 0;
+    let totalPcs = 0;
+    let itemsTableRows = '';
+
+    group.forEach((it, idx) => {
+      const q = Number(it.qty) || 1;
+      const h = Number(it.hargaProduk) || 0;
+      const f = Number(it.feeJastip) || 0;
+      const sub = Number(it.totalTagihan) || ((h + f) * q);
+      totalGrand += sub;
+      totalPcs += q;
+
+      itemsTableRows += `
+        <tr>
+          <td class="text-center text-muted">${idx + 1}</td>
+          <td>
+            <strong class="text-dark">${it.tokoPesanan || '-'}</strong><br>
+            <span class="text-muted small">${it.varianProduk && it.varianProduk !== '-' ? it.varianProduk : 'Original'}</span>
+          </td>
+          <td><span class="small text-muted">${it.dayaTahan || 'Lihat Kemasan'}</span></td>
+          <td class="text-center"><strong>${q}</strong></td>
+          <td class="text-end">Rp ${h.toLocaleString('id-ID')}</td>
+          <td class="text-end">Rp ${f.toLocaleString('id-ID')}</td>
+          <td class="text-end fw-bold text-primary">Rp ${sub.toLocaleString('id-ID')}</td>
+        </tr>
+      `;
+    });
 
     const modalContent = document.getElementById('modalContent');
     modalContent.innerHTML = `
-      <ul class="list-group list-group-flush mb-0" style="font-size: 0.78rem;">
-        <li class="list-group-item d-flex justify-content-between p-2"><span>Customer:</span> <strong>${o.namaCustomer || '-'}</strong></li>
-        <li class="list-group-item d-flex justify-content-between p-2"><span>Alamat Customer:</span> <strong>${o.alamatCod || '-'}</strong></li>
-        <li class="list-group-item d-flex justify-content-between p-2"><span>Toko:</span> <strong>${o.tokoPesanan || '-'}</strong></li>
-        <li class="list-group-item d-flex justify-content-between p-2"><span>Varian Rasa:</span> <strong class="text-primary">${o.varianProduk && o.varianProduk !== '-' ? o.varianProduk : 'Original'}</strong></li>
-        <li class="list-group-item d-flex justify-content-between p-2"><span>Tanggal Order:</span> <strong>${orderDateRes.formattedFull || formatCleanDate(o.batchJastip)}</strong></li>
-        <li class="list-group-item d-flex justify-content-between p-2 bg-warning-subtle text-dark"><span>Pesanan Ready:</span> <strong class="text-primary">${readyText || '-'}</strong></li>
-        <li class="list-group-item d-flex justify-content-between p-2"><span>Daya Tahan / Expired:</span> <strong>${expInfo}</strong></li>
-        <li class="list-group-item d-flex justify-content-between p-2"><span>Qty:</span> <strong>${o.qty || 1} pcs</strong></li>
-        <li class="list-group-item d-flex justify-content-between p-2"><span>Harga Item / Pcs:</span> <strong>Rp ${Number(o.hargaProduk || 0).toLocaleString('id-ID')}</strong></li>
-        <li class="list-group-item d-flex justify-content-between p-2"><span>Fee Jastip / pcs:</span> <strong>Rp ${Number(o.feeJastip || 0).toLocaleString('id-ID')}</strong></li>
-        <li class="list-group-item d-flex justify-content-between p-2"><span>Harga Jual / pcs:</span> <strong>Rp ${Number(o.hargaJual || 0).toLocaleString('id-ID')}</strong></li>
-        <li class="list-group-item d-flex justify-content-between p-2"><span>Status Payment:</span> <span class="${getPaymentBadgeClass(payStatus)}">${payStatus}</span></li>
-        <li class="list-group-item d-flex justify-content-between p-2"><span>Order Tracking:</span> <span class="${getLogisticsBadgeClass(logStatus)}">${logStatus}</span></li>
-        <li class="list-group-item d-flex justify-content-between p-2 bg-light"><span>Total Tagihan:</span> <strong class="text-primary fs-6">Rp ${Number(o.totalTagihan || 0).toLocaleString('id-ID')}</strong></li>
-      </ul>
-      <div class="row g-2 mt-3">
+      <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
+        <div>
+          <span class="badge bg-light text-primary border fs-6 fw-bold">${orderCode}</span>
+          <span class="badge bg-secondary-subtle text-dark ms-1">${group.length} Item</span>
+        </div>
+        <div class="d-flex gap-1">
+          <span class="${getPaymentBadgeClass(payStatus)}">${payStatus}</span>
+          <span class="${getLogisticsBadgeClass(logStatus)}">${logStatus}</span>
+        </div>
+      </div>
+
+      <div class="row g-2 mb-3 small">
         <div class="col-6">
-          <button class="btn btn-outline-success btn-sm w-100 fw-semibold" onclick="sendWhatsAppBill(${idx})">💬 WhatsApp Customer</button>
+          <div class="text-muted">Nama Pemesan:</div>
+          <div class="fw-bold">${first.namaCustomer || '-'}</div>
+          <div class="text-muted">📱 ${first.noWhatsapp || '-'}</div>
         </div>
         <div class="col-6">
-          <button class="btn btn-outline-primary btn-sm w-100 fw-semibold" onclick="generateInvoicePDF(${idx})">🧾 Buat Invoice PDF</button>
+          <div class="text-muted">Alamat Pengiriman:</div>
+          <div class="fw-semibold">📍 ${first.alamatCod || '-'}</div>
+          <div class="text-muted mt-1">🗓️ Ready: <span class="badge bg-warning-subtle text-dark">${readyText || '-'}</span></div>
+        </div>
+      </div>
+
+      <div class="table-responsive mb-2">
+        <table class="table table-sm table-bordered align-middle mb-0" style="font-size: 0.76rem;">
+          <thead class="table-light text-muted">
+            <tr>
+              <th style="width: 25px;" class="text-center">#</th>
+              <th>Toko & Varian</th>
+              <th style="width: 130px;">Daya Tahan</th>
+              <th style="width: 45px;" class="text-center">Qty</th>
+              <th style="width: 80px;" class="text-end">Harga</th>
+              <th style="width: 75px;" class="text-end">Fee</th>
+              <th style="width: 90px;" class="text-end">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${itemsTableRows}
+          </tbody>
+          <tfoot class="table-light">
+            <tr>
+              <th colspan="3" class="text-end">Total (${totalPcs} pcs):</th>
+              <th class="text-center">${totalPcs}</th>
+              <th colspan="2"></th>
+              <th class="text-end text-primary fs-6">Rp ${totalGrand.toLocaleString('id-ID')}</th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div class="row g-2 mt-3">
+        <div class="col-6">
+          <button class="btn btn-outline-success btn-sm w-100 fw-semibold" onclick="sendWhatsAppBill('${orderCode}')">💬 WhatsApp Customer</button>
+        </div>
+        <div class="col-6">
+          <button class="btn btn-outline-primary btn-sm w-100 fw-semibold" onclick="generateInvoicePDF('${orderCode}')">🧾 Buat Invoice PDF</button>
         </div>
       </div>
     `;
     previewModalEl.show();
   }
 
-  function directEditOrder(idx) {
-    const o = orders[idx];
+  // ==========================================
+  // EDIT ORDER MODAL
+  // ==========================================
+  function directEditOrder(orderIdentifier) {
+    let o = null;
+    if (typeof orderIdentifier === 'string') {
+      o = orders.find(item => extractOrderCode(item) === orderIdentifier);
+    } else if (typeof orderIdentifier === 'number') {
+      o = orders[orderIdentifier];
+    }
     if (!o) return;
     currentEditOrder = o;
 
     const curBrand = o.tokoPesanan || 'Tiramisusu';
     const curQty = Number(o.qty) || 1;
     const curFee = getFeePerPcs(curBrand, curQty);
-    const isSuper = currentLoggedInAdmin && currentLoggedInAdmin.role === 'superadmin';
     const defaultReady = getCleanReadyText(null, o.batchJastip);
-    const isTiramisusu = curBrand === 'Tiramisusu';
-    const isBolu = curBrand === 'Bolu Susu Lembang';
     const currentPrice = Number(o.hargaProduk) || 0;
     const curLokasi = o.lokasiToko || '';
     const payStatus = normalizePaymentStatus(o.statusOrder);
@@ -2868,6 +3724,30 @@
     });
   }
 
+  // ==========================================
+  // DELETE ORDER MODAL & ACTIONS
+  // ==========================================
+  let orderToDeleteRowIndexes = [];
+
+  function openDeleteOrderModal(orderCode) {
+    if (!currentLoggedInAdmin || currentLoggedInAdmin.role !== 'superadmin') {
+      showCustomAlert('Ditolak', 'Hanya Superadmin yang berhak menghapus pesanan!', '🚫');
+      return;
+    }
+
+    const group = orders.filter(o => extractOrderCode(o) === orderCode);
+    if (!group || group.length === 0) return;
+
+    orderToDeleteRowIndexes = group.map(o => o.rowIndex);
+    orderToDeleteRowIndex = null;
+
+    document.getElementById('deleteModalText').innerHTML = `
+      Yakin ingin menghapus seluruh pesanan <strong>${group[0].namaCustomer || 'Customer'}</strong> (${group.length} item, Kode: <code>${orderCode}</code>)?<br>
+      <span class="text-danger small">Semua ${group.length} baris pesanan ini di Google Sheets akan dihapus permanen.</span>
+    `;
+    deleteModalEl.show();
+  }
+
   function openDeleteModal(idx) {
     if (!currentLoggedInAdmin || currentLoggedInAdmin.role !== 'superadmin') {
       showCustomAlert('Ditolak', 'Hanya Superadmin yang berhak menghapus pesanan!', '🚫');
@@ -2877,43 +3757,55 @@
     const o = orders[idx];
     if (!o) return;
     orderToDeleteRowIndex = o.rowIndex;
+    orderToDeleteRowIndexes = [];
 
     document.getElementById('deleteModalText').innerHTML = `
-      Yakin ingin menghapus pesanan <strong>${o.namaCustomer}</strong> (${o.tokoPesanan})?<br>
+      Yakin ingin menghapus item pesanan <strong>${o.namaCustomer}</strong> (${o.tokoPesanan})?<br>
       <span class="text-muted" style="font-size: 0.75rem;">Data di Google Sheets akan dihapus permanen.</span>
     `;
     deleteModalEl.show();
   }
 
   function confirmDeleteAction() {
-    if (!orderToDeleteRowIndex) return;
+    let toDelete = [];
+    if (orderToDeleteRowIndexes && orderToDeleteRowIndexes.length > 0) {
+      toDelete = orderToDeleteRowIndexes;
+    } else if (orderToDeleteRowIndex) {
+      toDelete = [orderToDeleteRowIndex];
+    }
+
+    if (toDelete.length === 0) return;
 
     const btn = document.getElementById('confirmDeleteBtn');
     btn.disabled = true;
     btn.innerText = 'Menghapus...';
 
-    const payload = new URLSearchParams();
-    payload.append('action', 'deleteOrder');
-    payload.append('rowIndex', orderToDeleteRowIndex);
-
-    fetch(SCRIPT_URL, {
-      method: 'POST',
-      body: payload
-    })
-    .then(() => {
-      deleteModalEl.hide();
-      fetchOrders();
-      showCustomAlert('Terhapus', 'Pesanan berhasil dihapus dari sistem.', '🗑️');
-    })
-    .catch(err => {
-      showCustomAlert('Gagal', 'Gagal menghapus data dari server.', '⚠️');
-      console.error(err);
-    })
-    .finally(() => {
-      btn.disabled = false;
-      btn.innerText = 'Hapus';
-      orderToDeleteRowIndex = null;
+    const promises = toDelete.map(rIndex => {
+      const payload = new URLSearchParams();
+      payload.append('action', 'deleteOrder');
+      payload.append('rowIndex', rIndex);
+      return fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: payload
+      });
     });
+
+    Promise.all(promises)
+      .then(() => {
+        deleteModalEl.hide();
+        fetchOrders();
+        showCustomAlert('Terhapus', `${toDelete.length} item pesanan berhasil dihapus dari sistem.`, '🗑️');
+      })
+      .catch(err => {
+        showCustomAlert('Gagal', 'Gagal menghapus data dari server.', '⚠️');
+        console.error(err);
+      })
+      .finally(() => {
+        btn.disabled = false;
+        btn.innerText = 'Hapus';
+        orderToDeleteRowIndexes = [];
+        orderToDeleteRowIndex = null;
+      });
   }
 
   function exportToCSV() {
@@ -2963,6 +3855,8 @@
   document.getElementById('tanggalOrder').value = today;
   updateReadyDate();
   handleTokoChange();
+  initDefaultCart();
+  renderTableHead();
   setAdminMode(false);
   fetchAdminsFromCloud();
 </script>
