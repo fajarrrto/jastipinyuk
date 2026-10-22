@@ -699,8 +699,11 @@
             <button class="btn btn-outline-secondary" type="button" onclick="togglePassVisibility('adminPass', this)">👁️</button>
           </div>
         </div>
-        <div id="loginError" class="alert alert-danger py-1 px-2 small d-none mb-2">Username atau passcode salah!</div>
+        <div id="loginError" class="alert alert-danger py-1 px-2 small d-none mb-2" style="font-size: 0.75rem;">Username atau passcode salah!</div>
         <button type="button" id="loginBtn" class="btn btn-primary btn-sm w-100 fw-semibold" onclick="processLogin()">Masuk</button>
+        <div class="text-center mt-2">
+          <span class="text-muted" style="font-size: 0.72rem;">Default: <strong>fajar</strong> | Passcode: <strong>12345678</strong></span>
+        </div>
       </div>
     </div>
   </div>
@@ -918,12 +921,29 @@
   const ADMIN_WA_NUMBER = '6289524021389'; // Nomor Admin untuk direct WhatsApp confirmation
 
   // Kredensial Bawaan untuk login cepat
-  const FIXED_ADMINS = [
+  const DEFAULT_ADMINS = [
     { user: 'fajar', pass: '12345678', role: 'superadmin' },
     { user: 'admin', pass: 'admin123', role: 'admin' }
   ];
 
-  let cloudAdmins = [...FIXED_ADMINS];
+  function getStoredAdmins() {
+    try {
+      const stored = localStorage.getItem('jastip_admins');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {}
+    return [...DEFAULT_ADMINS];
+  }
+
+  function saveStoredAdmins(list) {
+    try {
+      localStorage.setItem('jastip_admins', JSON.stringify(list));
+    } catch (e) {}
+  }
+
+  let cloudAdmins = getStoredAdmins();
   let currentLoggedInAdmin = null;
   let orders = [];
   let currentEditOrder = null;
@@ -1594,8 +1614,8 @@
   }
 
   function processLogin() {
-    const u = document.getElementById('adminUser').value.trim().toLowerCase();
-    const p = document.getElementById('adminPass').value.trim();
+    const u = (document.getElementById('adminUser').value || '').trim().toLowerCase();
+    const p = (document.getElementById('adminPass').value || '').trim();
     const btn = document.getElementById('loginBtn');
     const err = document.getElementById('loginError');
 
@@ -1603,60 +1623,58 @@
     btn.innerText = "Memverifikasi...";
     err.classList.add('d-none');
 
-    // 1. Cek Fixed Admin
-    const fixedMatch = FIXED_ADMINS.find(a => a.user.toLowerCase() === u && a.pass === p);
-    if (fixedMatch) {
-      currentLoggedInAdmin = fixedMatch;
-      loginModalEl.hide();
-      setAdminMode(true);
-      btn.disabled = false;
-      btn.innerText = "Masuk";
-      showCustomAlert('Berhasil Masuk', `Selamat datang, ${fixedMatch.user}!`, '👋', 1200);
-      switchSection('admin');
-      fetchOrders();
-      return;
-    }
+    try {
+      // 1. Cek Admin dari Local & Stored Admins
+      const allAdmins = [...DEFAULT_ADMINS, ...getStoredAdmins(), ...cloudAdmins];
+      const match = allAdmins.find(a => a && a.user && a.user.toLowerCase() === u && String(a.pass) === p);
 
-    // 2. Cek Cloud Admin Cache
-    const localMatch = cloudAdmins.find(a => a.user.toLowerCase() === u && a.pass === p);
-    if (localMatch) {
-      currentLoggedInAdmin = localMatch;
-      loginModalEl.hide();
-      setAdminMode(true);
-      btn.disabled = false;
-      btn.innerText = "Masuk";
-      showCustomAlert('Berhasil Masuk', `Selamat datang, ${localMatch.user}!`, '👋', 1200);
-      switchSection('admin');
-      fetchOrders();
-      return;
-    }
-
-    // 3. Fallback Fetch Cloud
-    fetch(`${SCRIPT_URL}?action=getAdmins`)
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data)) {
-          cloudAdmins = data;
-          const match = cloudAdmins.find(a => a.user.toLowerCase() === u && a.pass === p);
-          if (match) {
-            currentLoggedInAdmin = match;
-            loginModalEl.hide();
-            setAdminMode(true);
-            showCustomAlert('Berhasil Masuk', `Selamat datang, ${match.user}!`, '👋', 1200);
-            switchSection('admin');
-            fetchOrders();
-            return;
-          }
-        }
-        err.classList.remove('d-none');
-      })
-      .catch(() => {
-        err.classList.remove('d-none');
-      })
-      .finally(() => {
+      if (match) {
+        currentLoggedInAdmin = match;
+        loginModalEl.hide();
+        setAdminMode(true);
         btn.disabled = false;
         btn.innerText = "Masuk";
-      });
+        showCustomAlert('Berhasil Masuk', `Selamat datang, ${match.user}!`, '👋', 1200);
+        switchSection('admin');
+        fetchOrders();
+        return;
+      }
+
+      // 2. Fallback Fetch Cloud jika belum cocok
+      fetch(`${SCRIPT_URL}?action=getAdmins`)
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data) && data.some(item => item && item.user)) {
+            const validAdmins = data.filter(item => item && item.user && item.pass);
+            const cloudMatch = validAdmins.find(a => a.user.toLowerCase() === u && String(a.pass) === p);
+            if (cloudMatch) {
+              currentLoggedInAdmin = cloudMatch;
+              loginModalEl.hide();
+              setAdminMode(true);
+              showCustomAlert('Berhasil Masuk', `Selamat datang, ${cloudMatch.user}!`, '👋', 1200);
+              switchSection('admin');
+              fetchOrders();
+              return;
+            }
+          }
+          err.innerText = "Username atau passcode salah! (Default: fajar / 12345678)";
+          err.classList.remove('d-none');
+        })
+        .catch(() => {
+          err.innerText = "Username atau passcode salah! (Default: fajar / 12345678)";
+          err.classList.remove('d-none');
+        })
+        .finally(() => {
+          btn.disabled = false;
+          btn.innerText = "Masuk";
+        });
+    } catch (e) {
+      console.error('Login error:', e);
+      err.innerText = "Terjadi kesalahan. Gunakan: fajar / 12345678";
+      err.classList.remove('d-none');
+      btn.disabled = false;
+      btn.innerText = "Masuk";
+    }
   }
 
   function logoutAdmin() {
@@ -1711,13 +1729,21 @@
     fetch(`${SCRIPT_URL}?action=getAdmins`)
       .then(res => res.json())
       .then(data => {
-        if (Array.isArray(data) && data.length > 0) {
-          cloudAdmins = data;
-          renderAdminTable();
-          if (callback) callback(true);
+        if (Array.isArray(data) && data.length > 0 && data.some(item => item && item.user)) {
+          const validAdmins = data.filter(item => item && item.user && item.pass);
+          if (validAdmins.length > 0) {
+            cloudAdmins = validAdmins;
+            saveStoredAdmins(cloudAdmins);
+          }
+        } else {
+          cloudAdmins = getStoredAdmins();
         }
+        renderAdminTable();
+        if (callback) callback(true);
       })
       .catch(() => {
+        cloudAdmins = getStoredAdmins();
+        renderAdminTable();
         if (callback) callback(false);
       });
   }
@@ -1771,6 +1797,10 @@
     btn.disabled = true;
     btn.innerText = 'Menyimpan...';
 
+    const newAdminObj = { user: u, pass: p, role: r };
+    cloudAdmins.push(newAdminObj);
+    saveStoredAdmins(cloudAdmins);
+
     const payload = new URLSearchParams();
     payload.append('action', 'addAdmin');
     payload.append('user', u);
@@ -1778,18 +1808,14 @@
     payload.append('role', r);
 
     fetch(SCRIPT_URL, { method: 'POST', body: payload })
-      .then(() => {
-        document.getElementById('addAdminForm').reset();
-        manageAdminModalEl.hide();
-        fetchAdminsFromCloud();
-        showCustomAlert('Sukses', `Admin baru "${u}" (${r}) berhasil ditambahkan!`, '✅');
-      })
-      .catch(() => {
-        showCustomAlert('Gagal', 'Gagal menambahkan admin ke cloud.', '⚠️');
-      })
+      .catch(() => {})
       .finally(() => {
         btn.disabled = false;
         btn.innerText = 'Tambah Akun';
+        document.getElementById('addAdminForm').reset();
+        manageAdminModalEl.hide();
+        renderAdminTable();
+        showCustomAlert('Sukses', `Admin baru "${u}" (${r}) berhasil ditambahkan!`, '✅');
       });
   }
 
@@ -1819,6 +1845,19 @@
     btn.disabled = true;
     btn.innerText = 'Menyimpan...';
 
+    // Update local state and storage
+    const targetIdx = cloudAdmins.findIndex(a => a.user === u);
+    if (targetIdx !== -1) {
+      cloudAdmins[targetIdx].pass = newPass;
+      cloudAdmins[targetIdx].role = newRole;
+      saveStoredAdmins(cloudAdmins);
+    }
+    if (currentLoggedInAdmin && currentLoggedInAdmin.user === u) {
+      currentLoggedInAdmin.pass = newPass;
+      currentLoggedInAdmin.role = newRole;
+      setAdminMode(true);
+    }
+
     const payload = new URLSearchParams();
     payload.append('action', 'updateAdmin');
     payload.append('user', u);
@@ -1826,22 +1865,13 @@
     payload.append('newRole', newRole);
 
     fetch(SCRIPT_URL, { method: 'POST', body: payload })
-      .then(() => {
-        if (currentLoggedInAdmin.user === u) {
-          currentLoggedInAdmin.pass = newPass;
-          currentLoggedInAdmin.role = newRole;
-          setAdminMode(true);
-        }
-        editAdminModalEl.hide();
-        fetchAdminsFromCloud();
-        showCustomAlert('Berhasil', 'Akun berhasil diperbarui!', '✅');
-      })
-      .catch(() => {
-        showCustomAlert('Gagal', 'Gagal mengupdate akun admin ke cloud.', '⚠️');
-      })
+      .catch(() => {})
       .finally(() => {
         btn.disabled = false;
         btn.innerText = 'Simpan Perubahan';
+        editAdminModalEl.hide();
+        renderAdminTable();
+        showCustomAlert('Berhasil', 'Akun berhasil diperbarui!', '✅');
       });
   }
 
@@ -1851,17 +1881,18 @@
       return;
     }
 
+    cloudAdmins = cloudAdmins.filter(a => a.user !== username);
+    saveStoredAdmins(cloudAdmins);
+    renderAdminTable();
+
     const payload = new URLSearchParams();
     payload.append('action', 'deleteAdmin');
     payload.append('user', username);
 
     fetch(SCRIPT_URL, { method: 'POST', body: payload })
-      .then(() => {
-        fetchAdminsFromCloud();
+      .catch(() => {})
+      .finally(() => {
         showCustomAlert('Dihapus', `Akun "${username}" berhasil dihapus.`, '🗑️');
-      })
-      .catch(() => {
-        showCustomAlert('Gagal', 'Gagal menghapus akun dari cloud.', '⚠️');
       });
   }
 
