@@ -275,6 +275,30 @@
       color: #334155;
       border: 1px solid #e2e8f0;
     }
+
+    /* Admin Sidebar Styling */
+    .admin-sidebar-nav .btn {
+      color: #334155;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      transition: all 0.2s ease-in-out;
+      text-align: left;
+      border: 1px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .admin-sidebar-nav .btn:hover {
+      background: #f1f5f9;
+      color: var(--primary-color);
+      transform: translateX(3px);
+    }
+    .admin-sidebar-nav .btn.active-nav-link {
+      background: #eff6ff !important;
+      color: var(--primary-color) !important;
+      font-weight: 700 !important;
+      border-color: #bfdbfe !important;
+    }
   </style>
 </head>
 <body class="pb-5">
@@ -307,13 +331,11 @@
       </button>
 
       <!-- Admin Controls -->
-      <div id="adminControls" class="d-none d-flex align-items-center gap-1">
-        <button class="btn btn-outline-secondary btn-sm fw-semibold" id="btnAdminViewToggle" onclick="switchSection('admin')">📊 Admin</button>
-        <button class="btn btn-outline-primary btn-sm fw-semibold" onclick="fetchOrders()">🔄 Refresh</button>
-        <a id="btnOpenSheet" class="btn btn-success btn-sm fw-semibold d-none" target="_blank" href="https://docs.google.com/spreadsheets/d/1pqptORPY_VySJQUnzlbAYkV0b6I2ttg109qBMb402ig/preview">📊 Sheets</a>
-        <button id="btnExportCSV" class="btn btn-outline-success btn-sm fw-semibold" onclick="exportToCSV()">📥 CSV</button>
-        <button id="btnManageAdmin" class="btn btn-outline-dark btn-sm fw-semibold" onclick="openManageAdminModal()">⚙️ Akun</button>
-        <button class="btn btn-danger btn-sm fw-semibold" onclick="logoutAdmin()">Keluar</button>
+      <div id="adminControls" class="d-none d-flex align-items-center gap-2">
+        <button class="btn btn-primary btn-sm fw-bold d-flex align-items-center gap-1 shadow-sm" id="btnAdminViewToggle" onclick="switchSection('admin')">
+          <span>📊 Dashboard Admin</span>
+        </button>
+        <button class="btn btn-outline-danger btn-sm fw-semibold" onclick="logoutAdmin()">Keluar</button>
       </div>
     </div>
   </div>
@@ -380,37 +402,22 @@
             <select class="form-select" id="tokoPesanan" required onchange="handleTokoChange()">
               <option value="Tiramisusu">Tiramisusu by Chocomory</option>
               <option value="Bolu Susu Lembang">Bolu Susu Lembang</option>
-              <option value="Kartika Sari">Kartika Sari</option>
+              <option value="Cuanki Serayu">Cuanki Serayu</option>
               <option value="Goela Semoet">Goela Semoet</option>
+              <option value="Roti Macan Bandung">Roti Macan Bandung</option>
+              <option value="Kartika Sari">Kartika Sari</option>
               <option value="Roti Segar">Roti Segar</option>
             </select>
           </div>
 
           <!-- Varian Rasa Produk -->
           <div class="mb-2" id="varianContainer">
-            <label class="form-label">Varian Produk</label>
-            
-            <!-- Varian Tiramisusu -->
-            <select class="form-select" id="varianTiramisusuSelect" onchange="handleTiramisusuVarianChange()">
-              <option value="Original" data-harga="89000">Original (Rp 89.000)</option>
-              <option value="Cookies n Cream" data-harga="89000">Cookies n Cream (Rp 89.000)</option>
-              <option value="Matcha" data-harga="99000">Matcha (Rp 99.000)</option>
-              <option value="Pistachio Kunafa" data-harga="119000">Pistachio Kunafa (Rp 119.000)</option>
-            </select>
-            
-            <!-- Varian Bolu Susu Lembang -->
-            <select class="form-select d-none" id="varianBoluLembangSelect" onchange="handleBoluLembangVarianChange()">
-              <option value="Pancake Coklat" data-harga="27000">Pancake Coklat (Rp 27.000)</option>
-              <option value="Pancake Keju" data-harga="27000">Pancake Keju (Rp 27.000)</option>
-              <option value="LAINNYA" data-harga="0">Lainnya / Varian Reguler</option>
-            </select>
-            <input type="text" class="form-control mt-1 d-none" id="varianBoluCustomText" placeholder="Ketik nama varian bolu...">
-
-            <!-- Manual Varian untuk Toko Lain -->
-            <input type="text" class="form-control d-none" id="varianProdukManual" placeholder="Tuliskan nama produk / varian" value="Varian Rasa"
-                   onclick="this.select()" 
-                   onfocus="if(this.value==='Varian Rasa') this.value='';" 
-                   onblur="if(!this.value.trim()) this.value='Varian Rasa';">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <label class="form-label mb-0">Varian Produk</label>
+              <span class="text-muted" style="font-size: 0.68rem;">Pilih varian atau tulis varian lain</span>
+            </div>
+            <select class="form-select" id="varianSelect" onchange="handleVarianChange()"></select>
+            <input type="text" class="form-control mt-1 d-none" id="varianCustomInput" placeholder="Ketik nama varian / produk lainnya...">
           </div>
           
           <!-- Tanggal Order & Estimasi Ready -->
@@ -493,109 +500,175 @@
     <!-- 3. SECTION MONITORING & ADMIN DASHBOARD    -->
     <!-- ========================================== -->
     <div id="adminPanel" class="col-12 d-none">
-      <div class="card-custom p-3">
-        
-        <!-- RINGKASAN FINANSIAL (SUPERADMIN ONLY) -->
-        <div id="summaryFinanceRow" class="mb-3">
-          <div class="row g-2">
-            <!-- Kolom 1 -->
-            <div class="col-md-4">
-              <div class="summary-card mb-2 border-success-subtle bg-success-subtle">
-                <span class="text-success-emphasis fw-semibold d-block" style="font-size: 0.72rem;">✅ Total Full Payment</span>
-                <strong class="text-success fs-6" id="sumFullPayment">Rp 0</strong>
-                <small class="text-muted d-block" style="font-size: 0.65rem;">Harga item + fee lunas penuh</small>
-              </div>
-              <div class="summary-card border-warning-subtle bg-warning-subtle">
-                <span class="text-warning-emphasis fw-semibold d-block" style="font-size: 0.72rem;">⚠️ Total Payment Order Only</span>
-                <strong class="text-dark fs-6" id="sumOrderOnly">Rp 0</strong>
-                <small class="text-muted d-block" style="font-size: 0.65rem;">Hanya bayar modal item saja</small>
+      <div class="row g-3">
+        <!-- SIDEBAR KIRI ADMIN & SUPERADMIN -->
+        <div class="col-12 col-lg-3 col-xl-2">
+          <div class="card-custom p-3 sticky-top" style="top: 80px;">
+            <div class="d-flex align-items-center gap-2 mb-3 pb-3 border-bottom">
+              <img src="logo.png" style="width: 38px; height: 38px; border-radius: 50%; border: 1px solid #cbd5e1;" alt="Logo">
+              <div>
+                <h6 class="fw-bold mb-0 text-dark" style="font-size: 0.85rem;">Panel Navigasi</h6>
+                <span id="sidebarUserBadge" class="badge bg-danger" style="font-size: 0.65rem;">Superadmin</span>
               </div>
             </div>
 
-            <!-- Kolom 2 -->
-            <div class="col-md-4">
-              <div class="summary-card mb-2 border-primary-subtle bg-primary-subtle">
-                <span class="text-primary-emphasis fw-semibold d-block" style="font-size: 0.72rem;">💵 Total Fee Lunas</span>
-                <strong class="text-primary fs-6" id="sumFeeLunas">Rp 0</strong>
-                <small class="text-muted d-block" style="font-size: 0.65rem;">Fee jastip yang sudah diterima</small>
-              </div>
-              <div class="summary-card border-danger-subtle bg-danger-subtle">
-                <span class="text-danger-emphasis fw-semibold d-block" style="font-size: 0.72rem;">⏳ Total Fee Belum Lunas</span>
-                <strong class="text-danger fs-6" id="sumFeeBelumLunas">Rp 0</strong>
-                <small class="text-muted d-block" style="font-size: 0.65rem;">Fee tertunggak (Order Only & Unpaid)</small>
-              </div>
-            </div>
-
-            <!-- Kolom 3 -->
-            <div class="col-md-4">
-              <div class="summary-card mb-2 border-dark-subtle bg-white">
-                <span class="text-dark fw-semibold d-block" style="font-size: 0.72rem;">🏦 Total Pendapatan Terkumpul</span>
-                <strong class="text-dark fs-6" id="sumPendapatanTerkumpul">Rp 0</strong>
-                <small class="text-muted d-block" style="font-size: 0.65rem;">Total modal/harga asli (Qty × Harga Produk)</small>
-              </div>
-              <div class="summary-card border-info-subtle bg-info-subtle">
-                <span class="text-info-emphasis fw-semibold d-block" style="font-size: 0.72rem;">📈 Total Fee Keseluruhan</span>
-                <strong class="text-info-emphasis fs-6" id="sumFeeKeseluruhan">Rp 0</strong>
-                <small class="text-muted d-block" style="font-size: 0.65rem;">Target potensi laba seluruh pesanan</small>
-              </div>
+            <div class="nav flex-column gap-1 admin-sidebar-nav">
+              <button class="btn btn-sm text-start fw-semibold py-2 px-2 active-nav-link" onclick="adminScrollTo('summaryFinanceRow')">
+                📊 Finansial & KPI
+              </button>
+              <button class="btn btn-sm text-start fw-semibold py-2 px-2" onclick="adminScrollTo('ordersTableSection')">
+                📋 Daftar Pesanan
+              </button>
+              <button class="btn btn-sm text-start fw-semibold py-2 px-2 text-primary" onclick="openCatalogModal()">
+                🏷️ Atur Harga & Fee
+              </button>
+              <button id="sidebarBtnManageAdmin" class="btn btn-sm text-start fw-semibold py-2 px-2" onclick="openManageAdminModal()">
+                ⚙️ Kelola Akun Admin
+              </button>
+              <button class="btn btn-sm text-start fw-semibold py-2 px-2" onclick="exportToCSV()">
+                📥 Ekspor Data CSV
+              </button>
+              <a id="sidebarBtnOpenSheet" class="btn btn-sm text-start fw-semibold py-2 px-2 text-decoration-none" target="_blank" href="https://docs.google.com/spreadsheets/d/1pqptORPY_VySJQUnzlbAYkV0b6I2ttg109qBMb402ig/preview">
+                📊 Buka Spreadsheet
+              </a>
+              <button class="btn btn-sm text-start fw-semibold py-2 px-2" onclick="fetchOrders()">
+                🔄 Refresh Data
+              </button>
+              <hr class="my-2 text-muted">
+              <button class="btn btn-sm text-start fw-semibold py-2 px-2 text-secondary" onclick="switchSection('form')">
+                🛍️ Form Pemesan
+              </button>
+              <button class="btn btn-sm text-start fw-semibold py-2 px-2 text-danger" onclick="logoutAdmin()">
+                🚪 Keluar (Logout)
+              </button>
             </div>
           </div>
         </div>
 
-        <!-- Filter Controls -->
-        <div class="row g-2 mb-2 align-items-center">
-          <div class="col-md-4">
-            <input type="text" id="searchFilter" class="form-control" placeholder="🔍 Cari customer, WA, alamat, toko, status..." oninput="renderTable()">
-          </div>
-          <div class="col-md-3">
-            <select id="filterPayStatus" class="form-select" onchange="renderTable()">
-              <option value="ALL">Semua Payment</option>
-              <option value="Full Payment">Full Payment</option>
-              <option value="Order Only">Order Only (Fee Belum)</option>
-              <option value="Fee Only">Fee Only</option>
-              <option value="Unpaid">Unpaid</option>
-              <option value="Refunded">Refunded</option>
-            </select>
-          </div>
-          <div class="col-md-3">
-            <select id="filterLogStatus" class="form-select" onchange="renderTable()">
-              <option value="ALL">Semua Order Tracking</option>
-              <option value="Order Placed">Order Placed</option>
-              <option value="Purchased">Purchased</option>
-              <option value="In Transit">In Transit</option>
-              <option value="Delivered">Delivered</option>
-              <option value="Cancelled">Cancelled</option>
-            </select>
-          </div>
-          <div class="col-md-2 text-md-end">
-            <span class="badge bg-secondary p-2" id="totalOrderBadge">Total: 0</span>
-          </div>
-        </div>
+        <!-- WORKSPACE UTAMA ADMIN -->
+        <div class="col-12 col-lg-9 col-xl-10">
+          <div class="card-custom p-3">
+            
+            <!-- RINGKASAN FINANSIAL (SUPERADMIN ONLY) -->
+            <div id="summaryFinanceRow" class="mb-3">
+              <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2 pb-2 border-bottom">
+                <div>
+                  <h6 class="fw-bold mb-0 text-dark">Ringkasan Finansial & KPI</h6>
+                  <div class="d-flex align-items-center gap-2 mt-1" id="kpiBatchStatusText">
+                    <span class="badge bg-success-subtle text-success border">Batch Aktif</span>
+                  </div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                  <label class="form-label mb-0 small fw-bold text-nowrap text-secondary">Pilih Batch:</label>
+                  <select id="kpiBatchFilter" class="form-select form-select-sm" style="min-width: 230px;" onchange="renderTable()"></select>
+                </div>
+              </div>
 
-        <!-- Tabel Data Pesanan -->
-        <div class="table-container">
-          <table class="table table-hover align-middle mb-0">
-            <thead>
-              <tr>
-                <th style="width: 40px;" class="text-center">NO</th>
-                <th>KODE</th>
-                <th>CUSTOMER & WHATSAPP</th>
-                <th>ALAMAT COD</th>
-                <th>TOKO</th>
-                <th>VARIAN</th>
-                <th>TGL ORDER</th>
-                <th>READY</th>
-                <th>QTY</th>
-                <th>TAGIHAN</th>
-                <th>PAYMENT</th>
-                <th>TRACKING</th>
-                <th class="text-center">ACTION</th>
-              </tr>
-            </thead>
-            <tbody id="tableBody">
-              <tr><td colspan="13" class="text-center py-3 text-muted">Memuat data dari Google Sheets...</td></tr>
-            </tbody>
-          </table>
+              <div class="row g-2">
+                <!-- Kolom 1 -->
+                <div class="col-md-4">
+                  <div class="summary-card mb-2 border-success-subtle bg-success-subtle">
+                    <span class="text-success-emphasis fw-semibold d-block" style="font-size: 0.72rem;">✅ Total Full Payment</span>
+                    <strong class="text-success fs-6" id="sumFullPayment">Rp 0</strong>
+                    <small class="text-muted d-block" style="font-size: 0.65rem;">Harga item + fee lunas penuh</small>
+                  </div>
+                  <div class="summary-card border-warning-subtle bg-warning-subtle">
+                    <span class="text-warning-emphasis fw-semibold d-block" style="font-size: 0.72rem;">⚠️ Total Payment Order Only</span>
+                    <strong class="text-dark fs-6" id="sumOrderOnly">Rp 0</strong>
+                    <small class="text-muted d-block" style="font-size: 0.65rem;">Hanya bayar modal item saja</small>
+                  </div>
+                </div>
+
+                <!-- Kolom 2 -->
+                <div class="col-md-4">
+                  <div class="summary-card mb-2 border-primary-subtle bg-primary-subtle">
+                    <span class="text-primary-emphasis fw-semibold d-block" style="font-size: 0.72rem;">💵 Total Fee Lunas</span>
+                    <strong class="text-primary fs-6" id="sumFeeLunas">Rp 0</strong>
+                    <small class="text-muted d-block" style="font-size: 0.65rem;">Fee jastip yang sudah diterima</small>
+                  </div>
+                  <div class="summary-card border-danger-subtle bg-danger-subtle">
+                    <span class="text-danger-emphasis fw-semibold d-block" style="font-size: 0.72rem;">⏳ Total Fee Belum Lunas</span>
+                    <strong class="text-danger fs-6" id="sumFeeBelumLunas">Rp 0</strong>
+                    <small class="text-muted d-block" style="font-size: 0.65rem;">Fee tertunggak (Order Only & Unpaid)</small>
+                  </div>
+                </div>
+
+                <!-- Kolom 3 -->
+                <div class="col-md-4">
+                  <div class="summary-card mb-2 border-dark-subtle bg-white">
+                    <span class="text-dark fw-semibold d-block" style="font-size: 0.72rem;">🏦 Total Pendapatan Terkumpul</span>
+                    <strong class="text-dark fs-6" id="sumPendapatanTerkumpul">Rp 0</strong>
+                    <small class="text-muted d-block" style="font-size: 0.65rem;">Total modal/harga asli (Qty × Harga Produk)</small>
+                  </div>
+                  <div class="summary-card border-info-subtle bg-info-subtle">
+                    <span class="text-info-emphasis fw-semibold d-block" style="font-size: 0.72rem;">📈 Total Fee Keseluruhan</span>
+                    <strong class="text-info-emphasis fs-6" id="sumFeeKeseluruhan">Rp 0</strong>
+                    <small class="text-muted d-block" style="font-size: 0.65rem;">Target potensi laba seluruh pesanan</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SECTION TABEL PESANAN -->
+            <div id="ordersTableSection">
+              <!-- Filter Controls -->
+              <div class="row g-2 mb-2 align-items-center">
+                <div class="col-md-4">
+                  <input type="text" id="searchFilter" class="form-control" placeholder="🔍 Cari customer, WA, alamat, toko, status..." oninput="renderTable()">
+                </div>
+                <div class="col-md-3">
+                  <select id="filterPayStatus" class="form-select" onchange="renderTable()">
+                    <option value="ALL">Semua Payment</option>
+                    <option value="Full Payment">Full Payment</option>
+                    <option value="Order Only">Order Only (Fee Belum)</option>
+                    <option value="Fee Only">Fee Only</option>
+                    <option value="Unpaid">Unpaid</option>
+                    <option value="Refunded">Refunded</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <select id="filterLogStatus" class="form-select" onchange="renderTable()">
+                    <option value="ALL">Semua Order Tracking</option>
+                    <option value="Order Placed">Order Placed</option>
+                    <option value="Purchased">Purchased</option>
+                    <option value="In Transit">In Transit</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="Cancelled">Cancelled</option>
+                  </select>
+                </div>
+                <div class="col-md-2 text-md-end">
+                  <span class="badge bg-secondary p-2" id="totalOrderBadge">Total: 0</span>
+                </div>
+              </div>
+
+              <!-- Tabel Data Pesanan -->
+              <div class="table-container">
+                <table class="table table-hover align-middle mb-0">
+                  <thead>
+                    <tr>
+                      <th style="width: 40px;" class="text-center">NO</th>
+                      <th>KODE</th>
+                      <th>CUSTOMER & WHATSAPP</th>
+                      <th>ALAMAT COD</th>
+                      <th>TOKO</th>
+                      <th>VARIAN</th>
+                      <th>TGL ORDER</th>
+                      <th>READY</th>
+                      <th>QTY</th>
+                      <th>TAGIHAN</th>
+                      <th>PAYMENT</th>
+                      <th>TRACKING</th>
+                      <th class="text-center">ACTION</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tableBody">
+                    <tr><td colspan="13" class="text-center py-3 text-muted">Memuat data dari Google Sheets...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
         </div>
       </div>
     </div>
@@ -830,6 +903,92 @@
 </div>
 
 <!-- ========================================== -->
+<!-- MODAL KELOLA HARGA & FEE KATALOG PRODUK    -->
+<!-- ========================================== -->
+<div class="modal fade" id="catalogModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header py-2">
+        <div class="d-flex align-items-center gap-2">
+          <span style="font-size: 1.2rem;">🏷️</span>
+          <h6 class="modal-title fw-bold">Pengaturan Harga & Fee Default Produk</h6>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-3">
+        <div class="alert alert-info py-2 px-3 small mb-3">
+          💡 Harga dan fee yang diatur di sini akan menjadi <strong>nilai bawaan (default)</strong> yang terkunci untuk pemesan, namun dapat disesuaikan kembali kapan saja oleh Admin/Superadmin.
+        </div>
+
+        <div class="row g-2 align-items-center mb-3">
+          <div class="col-md-6">
+            <label class="form-label fw-bold small mb-1">Pilih Toko Oleh-Oleh</label>
+            <select class="form-select form-select-sm" id="catalogStoreSelect" onchange="renderCatalogEditor()">
+              <option value="Tiramisusu">Tiramisusu by Chocomory</option>
+              <option value="Bolu Susu Lembang">Bolu Susu Lembang</option>
+              <option value="Cuanki Serayu">Cuanki Serayu</option>
+              <option value="Goela Semoet">Goela Semoet</option>
+              <option value="Roti Macan Bandung">Roti Macan Bandung</option>
+              <option value="Kartika Sari">Kartika Sari</option>
+              <option value="Roti Segar">Roti Segar</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-bold small mb-1">Fee Jastip Toko (Default / Pcs)</label>
+            <div class="input-group input-group-sm">
+              <span class="input-group-text">Rp</span>
+              <input type="number" class="form-control" id="catalogDefaultFee" onchange="updateStoreDefaultFee(this.value)">
+            </div>
+          </div>
+        </div>
+
+        <h6 class="fw-bold small text-primary mb-2">Daftar Varian & Harga Produk</h6>
+        <div class="table-responsive mb-3 border rounded" style="max-height: 240px;">
+          <table class="table table-sm table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr style="font-size: 0.72rem;">
+                <th>Varian</th>
+                <th style="width: 140px;">Harga Asli (Rp)</th>
+                <th style="width: 140px;">Fee (Rp)</th>
+                <th style="width: 50px;" class="text-center">Hapus</th>
+              </tr>
+            </thead>
+            <tbody id="catalogVariantsTable"></tbody>
+          </table>
+        </div>
+
+        <!-- Tambah Varian Baru -->
+        <div class="p-2 bg-light border rounded mb-3">
+          <span class="fw-semibold small d-block mb-1 text-dark">➕ Tambah Varian Baru ke Toko Ini</span>
+          <div class="row g-2 align-items-end">
+            <div class="col-md-5">
+              <input type="text" class="form-control form-control-sm" id="newVariantName" placeholder="Nama varian baru...">
+            </div>
+            <div class="col-md-3">
+              <input type="number" class="form-control form-control-sm" id="newVariantPrice" placeholder="Harga asli (Rp)...">
+            </div>
+            <div class="col-md-2">
+              <input type="number" class="form-control form-control-sm" id="newVariantFee" placeholder="Fee (Rp)...">
+            </div>
+            <div class="col-md-2">
+              <button class="btn btn-primary btn-sm w-100 fw-semibold" onclick="addNewCatalogVariant()">Tambah</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center">
+          <button type="button" class="btn btn-outline-danger btn-sm" onclick="resetCatalogToFactory()">🔄 Reset ke Default Pabrik</button>
+          <div class="d-flex gap-2">
+            <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">Tutup</button>
+            <button type="button" class="btn btn-success btn-sm fw-bold px-3" onclick="saveCatalogChanges()">💾 Simpan Perubahan</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================== -->
 <!-- TEMPLATE CETAK INVOICE / STRUK PDF         -->
 <!-- ========================================== -->
 <div id="invoicePdfTemplate">
@@ -961,6 +1120,7 @@
   const editAdminModalEl = new bootstrap.Modal(document.getElementById('editAdminModal'));
   const customAlertModalEl = new bootstrap.Modal(document.getElementById('customAlertModal'));
   const orderSuccessModalEl = new bootstrap.Modal(document.getElementById('orderSuccessModal'));
+  const catalogModalEl = new bootstrap.Modal(document.getElementById('catalogModal'));
 
   // ==========================================
   // PWA REGISTRATION & INSTALLATION (APK / WEBAPK)
@@ -1116,81 +1276,174 @@
   }
 
   // ==========================================
-  // BRAND & PRICING RULES
+  // BRAND & PRODUCT CATALOG (DEFAULT & EDITABLE)
   // ==========================================
-  function handleTokoChange() {
-    const toko = document.getElementById('tokoPesanan').value;
-    const tiramisusuSelect = document.getElementById('varianTiramisusuSelect');
-    const boluLembangSelect = document.getElementById('varianBoluLembangSelect');
-    const boluCustomInput = document.getElementById('varianBoluCustomText');
-    const textEl = document.getElementById('varianProdukManual');
-    const hargaDisplayEl = document.getElementById('hargaProdukDisplay');
+  const DEFAULT_CATALOG = {
+    "Tiramisusu": {
+      defaultFee: 20000,
+      variants: [
+        { name: "Original", price: 89000, fee: 20000 },
+        { name: "Cookies & Cream", price: 89000, fee: 20000 },
+        { name: "Chococheese", price: 99000, fee: 20000 },
+        { name: "Double Choco", price: 99000, fee: 20000 },
+        { name: "Burnt Cheesecake", price: 119000, fee: 20000 }
+      ]
+    },
+    "Bolu Susu Lembang": {
+      defaultFee: 10000,
+      variants: [
+        { name: "Chiffon Keju", price: 31000, fee: 10000 },
+        { name: "Bolu Gulung Coklat", price: 48000, fee: 10000 },
+        { name: "Bolu Gulung Keju", price: 48000, fee: 10000 },
+        { name: "Original", price: 38000, fee: 10000 },
+        { name: "Coklat", price: 38000, fee: 10000 },
+        { name: "Keju", price: 38000, fee: 10000 },
+        { name: "Red Velvet", price: 38000, fee: 10000 },
+        { name: "Blackforest", price: 38000, fee: 10000 }
+      ]
+    },
+    "Cuanki Serayu": {
+      defaultFee: 4000,
+      variants: [
+        { name: "Komplit", price: 26000, fee: 4000 },
+        { name: "Bakso Cuanki", price: 26000, fee: 4000 },
+        { name: "Batagor", price: 26000, fee: 4000 }
+      ]
+    },
+    "Goela Semoet": {
+      defaultFee: 10000,
+      variants: [
+        { name: "Bolen Pisang Mix", price: 65000, fee: 10000 },
+        { name: "Bolen Pisang Coklat", price: 65000, fee: 10000 },
+        { name: "Bolen Pisang Keju", price: 65000, fee: 10000 },
+        { name: "Bolen Peyeum Mix", price: 65000, fee: 10000 },
+        { name: "Bolen Peyeum Coklat", price: 65000, fee: 10000 },
+        { name: "Bolen Peyeum Keju", price: 65000, fee: 10000 }
+      ]
+    },
+    "Roti Macan Bandung": {
+      defaultFee: 20000,
+      variants: [
+        { name: "Paket B", price: 130000, fee: 20000 },
+        { name: "Cranberry Cheese", price: 45000, fee: 15000 },
+        { name: "Double Chocolate", price: 45000, fee: 15000 },
+        { name: "Parmesan", price: 45000, fee: 15000 }
+      ]
+    },
+    "Kartika Sari": {
+      defaultFee: 25000,
+      variants: [
+        { name: "Pisang Molen Keju Spesial", price: 75000, fee: 25000 },
+        { name: "Pisang Molen Coklat Keju", price: 75000, fee: 25000 },
+        { name: "Brownies Panggang Prima Rasa", price: 85000, fee: 25000 },
+        { name: "Almond Crispy Cheese", price: 65000, fee: 25000 }
+      ]
+    },
+    "Roti Segar": {
+      defaultFee: 5000,
+      variants: [
+        { name: "Roti Sisir Manis", price: 18000, fee: 5000 },
+        { name: "Roti Sisir Mentega", price: 18000, fee: 5000 },
+        { name: "Roti Sobek Coklat Keju", price: 25000, fee: 5000 }
+      ]
+    }
+  };
 
-    boluCustomInput.classList.add('d-none');
-
-    if (toko === 'Tiramisusu') {
-      tiramisusuSelect.classList.remove('d-none');
-      boluLembangSelect.classList.add('d-none');
-      textEl.classList.add('d-none');
-      handleTiramisusuVarianChange();
-    } else if (toko === 'Bolu Susu Lembang') {
-      tiramisusuSelect.classList.add('d-none');
-      boluLembangSelect.classList.remove('d-none');
-      textEl.classList.add('d-none');
-      handleBoluLembangVarianChange();
-    } else {
-      tiramisusuSelect.classList.add('d-none');
-      boluLembangSelect.classList.add('d-none');
-      textEl.classList.remove('d-none');
-      hargaDisplayEl.readOnly = false;
-      hargaDisplayEl.classList.remove('bg-light');
-      
-      const hargaValEl = document.getElementById('hargaProduk');
-      if (['89000', '99000', '119000', '27000'].includes(hargaValEl.value)) {
-        hargaValEl.value = '0';
-        hargaDisplayEl.value = 'Rp 0';
+  function getStoredCatalog() {
+    try {
+      const stored = localStorage.getItem('jastip_catalog');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
+          // Verify that newly requested stores exist in stored catalog, otherwise blend defaults
+          const merged = { ...DEFAULT_CATALOG };
+          for (const k in parsed) {
+            merged[k] = parsed[k];
+          }
+          return merged;
+        }
       }
-      hitungTotal();
+    } catch (e) {}
+    return JSON.parse(JSON.stringify(DEFAULT_CATALOG));
+  }
+
+  function saveStoredCatalog(catalogObj) {
+    try {
+      localStorage.setItem('jastip_catalog', JSON.stringify(catalogObj));
+    } catch (e) {}
+  }
+
+  let productCatalog = getStoredCatalog();
+
+  function adminScrollTo(elId) {
+    const el = document.getElementById(elId);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }
 
-  function handleTiramisusuVarianChange() {
-    const selectEl = document.getElementById('varianTiramisusuSelect');
-    const selectedOption = selectEl.options[selectEl.selectedIndex];
-    const harga = parseInt(selectedOption.getAttribute('data-harga')) || 89000;
-    
-    const hargaDisplayEl = document.getElementById('hargaProdukDisplay');
-    const hargaValEl = document.getElementById('hargaProduk');
+  // ==========================================
+  // BRAND & PRICING RULES FOR CUSTOMER FORM
+  // ==========================================
+  function handleTokoChange() {
+    const toko = document.getElementById('tokoPesanan').value;
+    const varianSelect = document.getElementById('varianSelect');
+    const customInput = document.getElementById('varianCustomInput');
+    const storeData = productCatalog[toko] || { defaultFee: 20000, variants: [] };
 
-    hargaValEl.value = harga;
-    hargaDisplayEl.value = 'Rp ' + Number(harga).toLocaleString('id-ID');
-    hargaDisplayEl.readOnly = true;
-    hargaDisplayEl.classList.add('bg-light');
-    hitungTotal();
+    let html = '';
+    (storeData.variants || []).forEach(v => {
+      const vFee = (v.fee !== undefined) ? v.fee : storeData.defaultFee;
+      html += `<option value="${v.name}" data-harga="${v.price}" data-fee="${vFee}">${v.name} (Rp ${Number(v.price).toLocaleString('id-ID')})</option>`;
+    });
+    html += `<option value="LAINNYA">➕ Varian Lainnya / Custom...</option>`;
+    
+    varianSelect.innerHTML = html;
+    if (storeData.variants && storeData.variants.length > 0) {
+      varianSelect.value = storeData.variants[0].name;
+    } else {
+      varianSelect.value = 'LAINNYA';
+    }
+
+    handleVarianChange();
   }
 
-  function handleBoluLembangVarianChange() {
-    const selectEl = document.getElementById('varianBoluLembangSelect');
-    const selectedOption = selectEl.options[selectEl.selectedIndex];
-    const customInput = document.getElementById('varianBoluCustomText');
+  function handleVarianChange() {
+    const toko = document.getElementById('tokoPesanan').value;
+    const varianSelect = document.getElementById('varianSelect');
+    const selectedOption = varianSelect.options[varianSelect.selectedIndex];
+    const customInput = document.getElementById('varianCustomInput');
     const hargaDisplayEl = document.getElementById('hargaProdukDisplay');
     const hargaValEl = document.getElementById('hargaProduk');
+    const feeDisplayEl = document.getElementById('feeJastipDisplay');
+    const feeValEl = document.getElementById('feeJastip');
+    const storeData = productCatalog[toko] || { defaultFee: 20000, variants: [] };
 
-    if (selectEl.value === 'LAINNYA') {
+    if (!selectedOption || selectedOption.value === 'LAINNYA') {
       customInput.classList.remove('d-none');
       customInput.focus();
       hargaDisplayEl.readOnly = false;
       hargaDisplayEl.classList.remove('bg-light');
-      hargaValEl.value = '0';
       hargaDisplayEl.value = 'Rp 0';
+      hargaValEl.value = '0';
+      
+      const defaultFee = storeData.defaultFee !== undefined ? storeData.defaultFee : 20000;
+      feeValEl.value = defaultFee;
+      feeDisplayEl.value = 'Rp ' + Number(defaultFee).toLocaleString('id-ID');
     } else {
       customInput.classList.add('d-none');
-      const harga = parseInt(selectedOption.getAttribute('data-harga')) || 27000;
+      const harga = parseInt(selectedOption.getAttribute('data-harga')) || 0;
+      const fee = parseInt(selectedOption.getAttribute('data-fee')) || storeData.defaultFee || 20000;
+
       hargaValEl.value = harga;
       hargaDisplayEl.value = 'Rp ' + Number(harga).toLocaleString('id-ID');
       hargaDisplayEl.readOnly = true;
       hargaDisplayEl.classList.add('bg-light');
+
+      feeValEl.value = fee;
+      feeDisplayEl.value = 'Rp ' + Number(fee).toLocaleString('id-ID');
     }
+
     hitungTotal();
   }
 
@@ -1204,32 +1457,161 @@
 
   function getFeePerPcs(brand, qty) {
     const b = (brand || '').trim();
-    if (b === 'Tiramisusu') return 30000;
-    if (b === 'Bolu Susu Lembang') return 10000;
-    if (b === 'Kartika Sari') return 25000;
-    if (b === 'Goela Semoet') return 25000;
     if (b === 'Roti Segar') {
       return (qty >= 3) ? 4000 : 5000;
     }
-    return 30000;
+    const storeData = productCatalog[b];
+    if (storeData && storeData.defaultFee !== undefined) {
+      return storeData.defaultFee;
+    }
+    return 20000;
   }
 
   function hitungTotal() {
     const brand = document.getElementById('tokoPesanan').value;
     const qty = parseInt(document.getElementById('qty').value) || 1;
     const harga = parseInt(document.getElementById('hargaProduk').value) || 0;
+    let feePerPcs = parseInt(document.getElementById('feeJastip').value) || 0;
 
-    const feePerPcs = getFeePerPcs(brand, qty);
-    document.getElementById('feeJastip').value = feePerPcs;
-    document.getElementById('feeJastipDisplay').value = 'Rp ' + feePerPcs.toLocaleString('id-ID');
+    // Diskon grosir khusus Roti Segar
+    if (brand === 'Roti Segar') {
+      feePerPcs = (qty >= 3) ? 4000 : 5000;
+      document.getElementById('feeJastip').value = feePerPcs;
+      document.getElementById('feeJastipDisplay').value = 'Rp ' + Number(feePerPcs).toLocaleString('id-ID');
+    }
 
     const totalFee = feePerPcs * qty;
     const hargaJualPerPcs = (qty > 0 || harga > 0) ? (harga + feePerPcs) : 0;
     const totalTagihan = (harga * qty) + totalFee;
 
-    document.getElementById('displayHargaJual').innerText = 'Rp ' + hargaJualPerPcs.toLocaleString('id-ID');
-    document.getElementById('displayTotalFee').innerText = 'Rp ' + totalFee.toLocaleString('id-ID');
-    document.getElementById('displayTotalTagihan').innerText = 'Rp ' + totalTagihan.toLocaleString('id-ID');
+    document.getElementById('displayHargaJual').innerText = 'Rp ' + Number(hargaJualPerPcs).toLocaleString('id-ID');
+    document.getElementById('displayTotalFee').innerText = 'Rp ' + Number(totalFee).toLocaleString('id-ID');
+    document.getElementById('displayTotalTagihan').innerText = 'Rp ' + Number(totalTagihan).toLocaleString('id-ID');
+  }
+
+  // ==========================================
+  // KATALOG HARGA & FEE MANAGEMENT (ADMIN & SUPERADMIN)
+  // ==========================================
+  function openCatalogModal() {
+    if (!currentLoggedInAdmin) {
+      showCustomAlert('Akses Terbatas', 'Silakan login sebagai Admin atau Superadmin terlebih dahulu!', '🔒');
+      return;
+    }
+    const storeSel = document.getElementById('catalogStoreSelect');
+    if (!storeSel.value) storeSel.value = 'Tiramisusu';
+    renderCatalogEditor();
+    catalogModalEl.show();
+  }
+
+  function renderCatalogEditor() {
+    const storeSel = document.getElementById('catalogStoreSelect');
+    const store = storeSel.value;
+    const storeData = productCatalog[store] || { defaultFee: 20000, variants: [] };
+    
+    document.getElementById('catalogDefaultFee').value = storeData.defaultFee;
+
+    const tbody = document.getElementById('catalogVariantsTable');
+    tbody.innerHTML = '';
+
+    (storeData.variants || []).forEach((v, idx) => {
+      const vFee = (v.fee !== undefined) ? v.fee : storeData.defaultFee;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>
+          <input type="text" class="form-control form-control-sm" value="${v.name}" 
+                 onchange="updateVariantField('${store}', ${idx}, 'name', this.value)">
+        </td>
+        <td>
+          <div class="input-group input-group-sm">
+            <span class="input-group-text py-0">Rp</span>
+            <input type="number" class="form-control form-control-sm" value="${v.price}" 
+                   onchange="updateVariantField('${store}', ${idx}, 'price', this.value)">
+          </div>
+        </td>
+        <td>
+          <div class="input-group input-group-sm">
+            <span class="input-group-text py-0">Rp</span>
+            <input type="number" class="form-control form-control-sm" value="${vFee}" 
+                   onchange="updateVariantField('${store}', ${idx}, 'fee', this.value)">
+          </div>
+        </td>
+        <td class="text-center">
+          <button class="btn btn-outline-danger btn-sm py-0 px-2" title="Hapus Varian" 
+                  onclick="deleteCatalogVariant('${store}', ${idx})">🗑️</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    if (!storeData.variants || storeData.variants.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted small py-2">Belum ada varian untuk toko ini.</td></tr>`;
+    }
+  }
+
+  function updateVariantField(store, idx, field, val) {
+    if (!productCatalog[store] || !productCatalog[store].variants[idx]) return;
+    if (field === 'price' || field === 'fee') {
+      productCatalog[store].variants[idx][field] = parseInt(val) || 0;
+    } else {
+      productCatalog[store].variants[idx][field] = val.trim();
+    }
+  }
+
+  function updateStoreDefaultFee(val) {
+    const store = document.getElementById('catalogStoreSelect').value;
+    if (!productCatalog[store]) productCatalog[store] = { defaultFee: 20000, variants: [] };
+    productCatalog[store].defaultFee = parseInt(val) || 0;
+  }
+
+  function addNewCatalogVariant() {
+    const store = document.getElementById('catalogStoreSelect').value;
+    const nameEl = document.getElementById('newVariantName');
+    const priceEl = document.getElementById('newVariantPrice');
+    const feeEl = document.getElementById('newVariantFee');
+
+    const name = nameEl.value.trim();
+    const price = parseInt(priceEl.value) || 0;
+    const fee = parseInt(feeEl.value) || (productCatalog[store] ? productCatalog[store].defaultFee : 20000);
+
+    if (!name) {
+      showCustomAlert('Perhatian', 'Nama varian baru wajib diisi!', '⚠️');
+      return;
+    }
+
+    if (!productCatalog[store]) productCatalog[store] = { defaultFee: fee, variants: [] };
+    productCatalog[store].variants.push({ name: name, price: price, fee: fee });
+
+    nameEl.value = '';
+    priceEl.value = '';
+    feeEl.value = '';
+
+    renderCatalogEditor();
+    showCustomAlert('Ditambahkan', `Varian "${name}" berhasil ditambahkan ke daftar.`, '➕', 1200);
+  }
+
+  function deleteCatalogVariant(store, idx) {
+    if (!productCatalog[store] || !productCatalog[store].variants[idx]) return;
+    const deletedName = productCatalog[store].variants[idx].name;
+    productCatalog[store].variants.splice(idx, 1);
+    renderCatalogEditor();
+    showCustomAlert('Dihapus', `Varian "${deletedName}" dihapus dari katalog.`, '🗑️', 1200);
+  }
+
+  function saveCatalogChanges() {
+    saveStoredCatalog(productCatalog);
+    handleTokoChange();
+    catalogModalEl.hide();
+    showCustomAlert('Berhasil Disimpan', 'Harga & fee default telah diperbarui dan langsung aktif!', '✅', 1800);
+  }
+
+  function resetCatalogToFactory() {
+    if (confirm('Yakin ingin mereset seluruh harga dan fee katalog ke bawaan awal pabrik?')) {
+      productCatalog = JSON.parse(JSON.stringify(DEFAULT_CATALOG));
+      saveStoredCatalog(productCatalog);
+      renderCatalogEditor();
+      handleTokoChange();
+      showCustomAlert('Direset', 'Katalog kembali ke setelan default pabrik.', '🔄', 1500);
+    }
   }
 
   // ==========================================
@@ -1260,22 +1642,16 @@
     const brand = document.getElementById('tokoPesanan').value;
     const qty = parseInt(document.getElementById('qty').value) || 1;
     const harga = parseInt(document.getElementById('hargaProduk').value) || 0;
-    const feePerPcs = getFeePerPcs(brand, qty);
+    const feePerPcs = parseInt(document.getElementById('feeJastip').value) || 0;
     const hargaJual = harga + feePerPcs;
     const totalTagihan = (harga * qty) + (feePerPcs * qty);
 
     let varian = '';
-    if (brand === 'Tiramisusu') {
-      varian = document.getElementById('varianTiramisusuSelect').value;
-    } else if (brand === 'Bolu Susu Lembang') {
-      const boluVal = document.getElementById('varianBoluLembangSelect').value;
-      if (boluVal === 'LAINNYA') {
-        varian = document.getElementById('varianBoluCustomText').value.trim() || 'Bolu Susu Lembang';
-      } else {
-        varian = boluVal;
-      }
+    const varianVal = document.getElementById('varianSelect').value;
+    if (varianVal === 'LAINNYA') {
+      varian = document.getElementById('varianCustomInput').value.trim() || 'Varian Custom';
     } else {
-      varian = document.getElementById('varianProdukManual').value;
+      varian = varianVal;
     }
 
     const orderId = generateOrderId();
@@ -1346,10 +1722,9 @@
       document.getElementById('orderForm').reset();
       document.getElementById('tokoPesanan').value = "Tiramisusu";
       document.getElementById('qty').value = "1";
-      document.getElementById('varianTiramisusuSelect').value = "Original";
-      document.getElementById('pesananReadyDisplay').value = "";
-      document.getElementById('pesananReady').value = "";
-      document.getElementById('hariOrderDisplay').innerText = "";
+      const todayIso = new Date().toISOString().split('T')[0];
+      document.getElementById('tanggalOrder').value = todayIso;
+      updateReadyDate();
       handleTokoChange();
     })
     .catch(err => {
@@ -1361,6 +1736,7 @@
       btn.innerText = '✨ Kirim Pesanan Sekarang';
     });
   });
+
 
   // ==========================================
   // CUSTOMER SELF-SERVICE TRACKING
@@ -1686,33 +2062,49 @@
   function setAdminMode(active) {
     const controls = document.getElementById('adminControls');
     const badge = document.getElementById('adminBadge');
+    const sidebarBadge = document.getElementById('sidebarUserBadge');
     const summaryRow = document.getElementById('summaryFinanceRow');
     const btnCSV = document.getElementById('btnExportCSV');
     const btnSheet = document.getElementById('btnOpenSheet');
     const btnManage = document.getElementById('btnManageAdmin');
+    const sidebarManage = document.getElementById('sidebarBtnManageAdmin');
 
     if (active && currentLoggedInAdmin) {
-      controls.classList.remove('d-none');
-      badge.classList.remove('d-none');
+      if (controls) controls.classList.remove('d-none');
+      if (badge) badge.classList.remove('d-none');
 
       if (currentLoggedInAdmin.role === 'superadmin') {
-        badge.innerText = `Superadmin: ${currentLoggedInAdmin.user}`;
-        badge.className = "badge bg-danger ms-1";
-        summaryRow.classList.remove('d-none');
-        btnCSV.classList.remove('d-none');
-        btnSheet.classList.remove('d-none');
-        btnManage.classList.remove('d-none');
+        if (badge) {
+          badge.innerText = `Superadmin: ${currentLoggedInAdmin.user}`;
+          badge.className = "badge bg-danger ms-1";
+        }
+        if (sidebarBadge) {
+          sidebarBadge.innerText = `Superadmin: ${currentLoggedInAdmin.user}`;
+          sidebarBadge.className = "badge bg-danger";
+        }
+        if (summaryRow) summaryRow.classList.remove('d-none');
+        if (btnCSV) btnCSV.classList.remove('d-none');
+        if (btnSheet) btnSheet.classList.remove('d-none');
+        if (btnManage) btnManage.classList.remove('d-none');
+        if (sidebarManage) sidebarManage.classList.remove('d-none');
       } else {
-        badge.innerText = `Admin: ${currentLoggedInAdmin.user}`;
-        badge.className = "badge bg-secondary ms-1";
-        summaryRow.classList.add('d-none');
-        btnCSV.classList.add('d-none');
-        btnSheet.classList.add('d-none');
-        btnManage.classList.add('d-none');
+        if (badge) {
+          badge.innerText = `Admin: ${currentLoggedInAdmin.user}`;
+          badge.className = "badge bg-secondary ms-1";
+        }
+        if (sidebarBadge) {
+          sidebarBadge.innerText = `Admin: ${currentLoggedInAdmin.user}`;
+          sidebarBadge.className = "badge bg-secondary";
+        }
+        if (summaryRow) summaryRow.classList.add('d-none');
+        if (btnCSV) btnCSV.classList.add('d-none');
+        if (btnSheet) btnSheet.classList.add('d-none');
+        if (btnManage) btnManage.classList.add('d-none');
+        if (sidebarManage) sidebarManage.classList.add('d-none');
       }
     } else {
-      controls.classList.add('d-none');
-      badge.classList.add('d-none');
+      if (controls) controls.classList.add('d-none');
+      if (badge) badge.classList.add('d-none');
     }
   }
 
@@ -1899,6 +2291,61 @@
   // ==========================================
   // TABLE RENDERING & ORDERS MANAGEMENT
   // ==========================================
+  function getOrderBatchIso(o) {
+    if (!o) return '';
+    const raw = o.batchJastip || o.tanggalOrder;
+    const res = calculateReadyDate(raw);
+    return res.iso || '';
+  }
+
+  function getOrderBatchLabel(o) {
+    if (!o) return '-';
+    const raw = o.batchJastip || o.tanggalOrder;
+    const res = calculateReadyDate(raw);
+    return res.formatted || '-';
+  }
+
+  function updateKpiBatchDropdown() {
+    const select = document.getElementById('kpiBatchFilter');
+    if (!select) return;
+
+    const prevVal = select.value || 'ACTIVE';
+    const todayIso = new Date().toLocaleDateString('en-CA');
+
+    const batchMap = new Map();
+    orders.forEach(o => {
+      const iso = getOrderBatchIso(o);
+      if (iso && !batchMap.has(iso)) {
+        batchMap.set(iso, {
+          iso: iso,
+          label: getOrderBatchLabel(o),
+          isPast: iso < todayIso
+        });
+      }
+    });
+
+    const sorted = Array.from(batchMap.values()).sort((a, b) => b.iso.localeCompare(a.iso));
+
+    let html = `
+      <option value="ACTIVE">⭐ Batch Aktif (Berjalan)</option>
+      <option value="ALL">📋 Semua Batch (All Time)</option>
+    `;
+
+    if (sorted.length > 0) {
+      html += `<optgroup label="── Rekap Per Batch Pengiriman ──">`;
+      sorted.forEach(b => {
+        const tag = b.isPast ? 'Selesai' : 'Aktif';
+        const icon = b.isPast ? '📦' : '🚚';
+        html += `<option value="${b.iso}">${icon} ${b.label} (${tag})</option>`;
+      });
+      html += `</optgroup>`;
+    }
+
+    select.innerHTML = html;
+    const exists = Array.from(select.options).some(opt => opt.value === prevVal);
+    select.value = exists ? prevVal : 'ACTIVE';
+  }
+
   function fetchOrders() {
     if (!currentLoggedInAdmin) return;
     const tbody = document.getElementById('tableBody');
@@ -1909,6 +2356,7 @@
       .then(data => {
         if (Array.isArray(data)) {
           orders = data;
+          updateKpiBatchDropdown();
           renderTable();
         } else {
           tbody.innerHTML = `<tr><td colspan="13" class="text-center py-3 text-danger">Format data tidak valid.</td></tr>`;
@@ -2012,8 +2460,46 @@
     const search = (document.getElementById('searchFilter').value || '').trim().toLowerCase();
     const filterPay = document.getElementById('filterPayStatus').value;
     const filterLog = document.getElementById('filterLogStatus').value;
+    const kpiFilter = document.getElementById('kpiBatchFilter') ? document.getElementById('kpiBatchFilter').value : 'ACTIVE';
+    const statusContainer = document.getElementById('kpiBatchStatusText');
     const tbody = document.getElementById('tableBody');
     tbody.innerHTML = '';
+
+    const todayIso = new Date().toLocaleDateString('en-CA');
+
+    // 1. KPI Financial Calculations based on Batch Filter & Expiry Reset
+    let kpiOrders = [];
+
+    if (kpiFilter === 'ALL') {
+      kpiOrders = orders;
+      if (statusContainer) {
+        statusContainer.innerHTML = `<span class="badge bg-primary-subtle text-primary border">📊 Rekap Finansial Keseluruhan (Semua Batch)</span>`;
+      }
+    } else if (kpiFilter === 'ACTIVE') {
+      // Ambil pesanan yang tanggal ready batch-nya masih aktif (>= hari ini)
+      kpiOrders = orders.filter(o => {
+        const iso = getOrderBatchIso(o);
+        return iso && iso >= todayIso;
+      });
+
+      if (statusContainer) {
+        if (kpiOrders.length > 0) {
+          const firstBatchLabel = getOrderBatchLabel(kpiOrders[0]);
+          statusContainer.innerHTML = `<span class="badge bg-success-subtle text-success border">🟢 Batch Aktif (${firstBatchLabel})</span>`;
+        } else {
+          // Ketika batch pengiriman sudah lewat, reset ke Rp 0 & tampilkan info rekap
+          statusContainer.innerHTML = `<span class="badge bg-secondary-subtle text-muted border">⌛ Batch pengiriman telah lewat (KPI di-reset ke Rp 0). Silakan pilih opsi Rekap pada dropdown untuk melihat riwayat batch sebelumnya.</span>`;
+        }
+      }
+    } else {
+      // Filter specific batch ISO
+      kpiOrders = orders.filter(o => getOrderBatchIso(o) === kpiFilter);
+      if (statusContainer) {
+        const sample = kpiOrders[0];
+        const lbl = sample ? getOrderBatchLabel(sample) : kpiFilter;
+        statusContainer.innerHTML = `<span class="badge bg-warning-subtle text-dark border">📜 Rekap Batch: ${lbl}</span>`;
+      }
+    }
 
     let sumFullPay = 0;
     let sumOrderOnlyVal = 0;
@@ -2022,34 +2508,7 @@
     let sumTotalFeeKeseluruhan = 0;
     let sumTotalModalAsliKeseluruhan = 0;
 
-    const filtered = orders.filter(o => {
-      const nama = String(o.namaCustomer || '').toLowerCase();
-      const alamat = String(o.alamatCod || '').toLowerCase();
-      const toko = String(o.tokoPesanan || '').toLowerCase();
-      const lokasi = String(o.lokasiToko || '').toLowerCase();
-      const varian = String(o.varianProduk || '').toLowerCase();
-      const tgl = String(o.batchJastip || '').toLowerCase();
-      
-      const payStatus = normalizePaymentStatus(o.statusOrder);
-      const logStatus = normalizeLogisticsStatus(o.statusFulfillment || o.statusOrder, payStatus);
-
-      const matchSearch = !search || 
-                          nama.includes(search) || 
-                          alamat.includes(search) || 
-                          toko.includes(search) || 
-                          lokasi.includes(search) || 
-                          varian.includes(search) ||
-                          tgl.includes(search) ||
-                          payStatus.toLowerCase().includes(search) ||
-                          logStatus.toLowerCase().includes(search);
-
-      const matchPay = (filterPay === 'ALL') || (payStatus.toLowerCase() === filterPay.toLowerCase());
-      const matchLog = (filterLog === 'ALL') || (logStatus.toLowerCase() === filterLog.toLowerCase());
-
-      return matchSearch && matchPay && matchLog;
-    });
-
-    filtered.forEach(o => {
+    kpiOrders.forEach(o => {
       const q = Number(o.qty) || 1;
       const modalItem = (Number(o.hargaProduk) || 0) * q;
       const feeItem = (Number(o.feeJastip) || 0) * q;
@@ -2078,6 +2537,35 @@
     document.getElementById('sumFeeBelumLunas').innerText = 'Rp ' + sumFeeBelumLunasVal.toLocaleString('id-ID');
     document.getElementById('sumPendapatanTerkumpul').innerText = 'Rp ' + sumTotalModalAsliKeseluruhan.toLocaleString('id-ID');
     document.getElementById('sumFeeKeseluruhan').innerText = 'Rp ' + sumTotalFeeKeseluruhan.toLocaleString('id-ID');
+
+    // 2. Orders Table filtering & rendering
+    const filtered = orders.filter(o => {
+      const nama = String(o.namaCustomer || '').toLowerCase();
+      const alamat = String(o.alamatCod || '').toLowerCase();
+      const toko = String(o.tokoPesanan || '').toLowerCase();
+      const lokasi = String(o.lokasiToko || '').toLowerCase();
+      const varian = String(o.varianProduk || '').toLowerCase();
+      const tgl = String(o.batchJastip || '').toLowerCase();
+      
+      const payStatus = normalizePaymentStatus(o.statusOrder);
+      const logStatus = normalizeLogisticsStatus(o.statusFulfillment || o.statusOrder, payStatus);
+
+      const matchSearch = !search || 
+                          nama.includes(search) || 
+                          alamat.includes(search) || 
+                          toko.includes(search) || 
+                          lokasi.includes(search) || 
+                          varian.includes(search) ||
+                          tgl.includes(search) ||
+                          payStatus.toLowerCase().includes(search) ||
+                          logStatus.toLowerCase().includes(search);
+
+      const matchPay = (filterPay === 'ALL') || (payStatus.toLowerCase() === filterPay.toLowerCase());
+      const matchLog = (filterLog === 'ALL') || (logStatus.toLowerCase() === filterLog.toLowerCase());
+
+      return matchSearch && matchPay && matchLog;
+    });
+
     document.getElementById('totalOrderBadge').innerText = `Total: ${filtered.length}`;
 
     if (filtered.length === 0) {
@@ -2235,8 +2723,10 @@
             <select class="form-select form-select-sm" id="editToko" required onchange="handleEditTokoChange()">
               <option value="Tiramisusu" ${curBrand === 'Tiramisusu' ? 'selected' : ''}>Tiramisusu</option>
               <option value="Bolu Susu Lembang" ${curBrand === 'Bolu Susu Lembang' ? 'selected' : ''}>Bolu Susu Lembang</option>
-              <option value="Kartika Sari" ${curBrand === 'Kartika Sari' ? 'selected' : ''}>Kartika Sari</option>
+              <option value="Cuanki Serayu" ${curBrand === 'Cuanki Serayu' ? 'selected' : ''}>Cuanki Serayu</option>
               <option value="Goela Semoet" ${curBrand === 'Goela Semoet' ? 'selected' : ''}>Goela Semoet</option>
+              <option value="Roti Macan Bandung" ${curBrand === 'Roti Macan Bandung' ? 'selected' : ''}>Roti Macan Bandung</option>
+              <option value="Kartika Sari" ${curBrand === 'Kartika Sari' ? 'selected' : ''}>Kartika Sari</option>
               <option value="Roti Segar" ${curBrand === 'Roti Segar' ? 'selected' : ''}>Roti Segar</option>
             </select>
           </div>
@@ -2317,8 +2807,16 @@
     const hargaJual = harga + fee;
     const total = hargaJual * qty;
 
-    document.getElementById('editDisplayJual').innerText = 'Rp ' + hargaJual.toLocaleString('id-ID');
-    document.getElementById('editDisplayTotal').innerText = 'Rp ' + total.toLocaleString('id-ID');
+    document.getElementById('editDisplayJual').innerText = 'Rp ' + Number(hargaJual).toLocaleString('id-ID');
+    document.getElementById('editDisplayTotal').innerText = 'Rp ' + Number(total).toLocaleString('id-ID');
+  }
+
+  function handleEditTokoChange() {
+    const toko = document.getElementById('editToko').value;
+    const qty = parseInt(document.getElementById('editQty').value) || 1;
+    const fee = getFeePerPcs(toko, qty);
+    document.getElementById('editFee').value = fee;
+    hitungEditTotal();
   }
 
   function saveEditedOrder() {
@@ -2461,14 +2959,12 @@
   // ==========================================
   // INITIALIZATION
   // ==========================================
-  setAdminMode(false);
-  handleTokoChange();
-  fetchAdminsFromCloud();
-
-  // Set default order date to today
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('tanggalOrder').value = today;
   updateReadyDate();
+  handleTokoChange();
+  setAdminMode(false);
+  fetchAdminsFromCloud();
 </script>
 </body>
 </html>
